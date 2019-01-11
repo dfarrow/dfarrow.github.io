@@ -1,4 +1,14 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #EEEEEE;
+    color: #FFF;
+    background-color: #000000;
+    text-align: center;
+}
+
+a { 
+    color: #99aaFF;
+}
+.heroImage {
+    width: 30%;
+    height: auto;
 }
