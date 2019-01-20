@@ -84,18 +84,45 @@
         </g>
          
         <g class="purpletriangles" transform="translate(360, 90) " >
+            <defs>
+                <linearGradient id="purpgrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#342e6d;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#837cc5;stop-opacity:1" /> 
+                </linearGradient>
+                <linearGradient id="purpgrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#837cc5;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#342e6d;stop-opacity:1" />
+                </linearGradient>
+            </defs>
             <circle cx="84" cy="36" r="35" fill="#58A59D" stroke="#347672" stroke-width="2"/>
-            <polygon points="30,0 40,36 0,32" fill="#342e6d" stroke="#000" stroke-width="2" fill-opacity=".8" />
-            <polygon points="40,36 90,42 60,150" fill="#342e6d" stroke="#000" stroke-width="2" fill-opacity=".8" />
+            <polygon points="30,0 40,36 0,32" fill="url(#purpgrad1)"  stroke="#000" stroke-width="2" fill-opacity=".9" />
+            <polygon points="40,36 90,42 60,150" fill="url(#purpgrad2)" stroke="#000" stroke-width="2" fill-opacity=".9" />
         </g>
 
-        <g class="whitetriangles" transform="translate(400, 70) " >
-            <!-- <circle cx="84" cy="36" r="35" fill="#58A59D" stroke="#347672" stroke-width="1"/> -->
+        <g class="whitetriangles" transform="translate(400, 70) " > 
             <line x1="0" y1="170" x2="195" y2="170" stroke-width="2" stroke="#000" />
             <polygon points="130,0 145,170 60,170" fill="#FFF" stroke="#000" stroke-width="2" fill-opacity=".8" />  
         </g>
 
-        <g class='checkerboard' transform="translate(625, 118) rotate(-32)">
+        <g class='checkerboard' transform="translate(584, 106) ">
+                <rect x="0" y="0" width="8" height="7" fill="#FFF" stroke="#000" stroke-width="2"/>
+                <rect x="8" y="0" width="8" height="7" fill="#85ae3a" stroke="#000" stroke-width="2"/>
+                <rect x="15" y="0" width="8" height="7" fill="#eecc53" stroke="#000" stroke-width="2"/>
+
+                <rect x="0" y="7" width="8" height="7" fill="#85ae3a" stroke="#000" stroke-width="2"/>
+                <rect x="8" y="7" width="8" height="7" fill="#eecc53" stroke="#000" stroke-width="2"/>
+                <rect x="15" y="7" width="8" height="7" fill="#85ae3a" stroke="#000" stroke-width="2"/>
+
+                <rect x="0" y="14" width="8" height="7" fill="#eecc53" stroke="#000" stroke-width="2"/>
+                <rect x="8" y="14" width="8" height="7" fill="#85ae3a" stroke="#000" stroke-width="2"/>
+                <rect x="15" y="14" width="8" height="7" fill="#FFF" stroke="#000" stroke-width="2"/>
+
+                <line x1="7" y1="20" x2="11" y2="68"  stroke="#000"  stroke-width="2"  />
+                <line x1="16" y1="20" x2="11" y2="68"  stroke="#000"  stroke-width="2"  /> 
+    
+            </g>
+
+        <g class='checkerboard2' transform="translate(630, 138) rotate(-32)">
             <rect x="0" y="0" width="26" height="26" fill="#C1432C" stroke="#000" stroke-width="2"/>
             <rect x="24" y="0" width="26" height="26" fill="#E69A76" stroke="#000" stroke-width="2"/>
             <rect x="0" y="24" width="26" height="26" fill="#E69A76" stroke="#000" stroke-width="2"/>
@@ -106,7 +133,7 @@
             <line x1="-50" y1="24" x2="0" y2="24"  stroke="#000"  stroke-width="2"  />
             <line x1="-50" y1="24" x2="0" y2="36"  stroke="#000"  stroke-width="2"  />
             <line x1="-50" y1="24" x2="0" y2="50" stroke="#000"  stroke-width="2"  />
-            <polygon points="-50,24 -18,140 -45,83" fill="#aa432C"   fill-opacity="1" />  
+            <polygon points="-50,24 -18,130 -45,76" fill="#aa432C"   fill-opacity="1" />  
 
         </g>
         
@@ -115,6 +142,7 @@
         <rect x="384" y="248" width="14" height="14" fill="#5d9ebc" stroke="#000" stroke-width="3"/>
         <rect x="554" y="218" width="11" height="11" fill="#ebbd43" stroke="#000" stroke-width="2"/>
         <rect x="573" y="208" width="9" height="9" />
+        <rect x="628" y="117" width="9" height="8" />
         <g transform="translate(594, 241)">
             <rect transform="rotate(15)" width="14" height="14" fill="#99cc77" stroke="#666" stroke-width="2"/>
         </g>
@@ -130,6 +158,15 @@
                 </pattern>
             </defs>
             <circle cx="0" cy="0" r="13" fill="#FFF" stroke="#333" stroke-width="2" style="fill: url(#circles-1)" />
+        </g>
+
+        <g transform="translate(541,66)">
+            <line x1="0" y1="0" x2="36" y2="0"  stroke="#000"  stroke-width="4"  />
+            <line x1="0" y1="13" x2="36" y2="13"  stroke="#000"  stroke-width="9"  />
+            <line x1="0" y1="48" x2="44" y2="48"  stroke="#000"  stroke-width="2"  />
+            <line x1="0" y1="74" x2="36" y2="74"  stroke="#000"  stroke-width="5"  />
+            <line x1="0" y1="82" x2="36" y2="82"  stroke="#000"  stroke-width="2"  />
+            <line x1="-2" y1="96" x2="36" y2="96" stroke="#000"  stroke-width="12"  />
         </g>
     </svg>
   </div>
