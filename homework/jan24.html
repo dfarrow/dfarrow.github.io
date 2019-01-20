@@ -79,9 +79,9 @@
 
             <line x1="167" y1="-68" x2="167" y2="130"  stroke="#000" stroke-width="2" />
             <g transform="translate(18, -21) rotate(8)">
-                <line x1="156" y1="102" x2="191" y2="102"  stroke="#000"  stroke-width="2"  />
-                <line x1="156" y1="109" x2="191" y2="109"  stroke="#000"  stroke-width="2"  />
-                <line x1="156" y1="116" x2="191" y2="116"  stroke="#000"  stroke-width="2"  />
+                <line x1="156" y1="102" x2="192" y2="102"  stroke="#000"  stroke-width="2"  />
+                <line x1="156" y1="109" x2="192" y2="109"  stroke="#000"  stroke-width="2"  />
+                <line x1="156" y1="116" x2="192" y2="116"  stroke="#000"  stroke-width="2"  />
             </g>
         </g>
          
@@ -96,9 +96,14 @@
                     <stop offset="100%" style="stop-color:#342e6d;stop-opacity:1" />
                 </linearGradient>
             </defs>
+            <defs>
+            <filter id="blend"> 
+                <feBlend in="SourceGraphic" mode="multiply"/>
+            </filter>
+            </defs>
             <circle cx="84" cy="36" r="35" fill="#58A59D" stroke="#347672" stroke-width="2"/>
-            <polygon points="30,0 40,36 0,32" fill="url(#purpgrad1)"  stroke="#000" stroke-width="2" fill-opacity=".9" />
-            <polygon points="40,36 90,42 60,150" fill="url(#purpgrad2)" stroke="#000" stroke-width="2" fill-opacity=".9" />
+            <polygon points="30,0 40,36 0,32" fill="url(#purpgrad1)"  stroke="#000" stroke-width="2" fill-opacity=".6" style="filter:url(#blend);" />
+            <polygon points="40,36 90,42 60,150" fill="url(#purpgrad2)" stroke="#000" stroke-width="2" fill-opacity=".6" style="filter:url(#blend);" />
         </g>
 
         <g class="whitetriangles" transform="translate(400, 70) " > 
