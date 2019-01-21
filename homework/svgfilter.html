@@ -1,0 +1,20 @@
+<html>
+    <head>
+    </head>
+    <body style="background-color: #AAAAAA">
+            
+        <svg width="500" height="500" style="background-color: white">
+                <defs>
+                    <filter id="noiseFilter" y="-40%" x="-40%" height="180%" width="180%">
+                        <feTurbulence y="0px" height="600" width="600" result="waves" type="turbulence" baseFrequency="0.8 0.8" numOctaves="1" seed="53" />
+                        <feDisplacementMap in="SourceGraphic" in2="waves" width="600" height="600" scale="40" xChannelSelector="G" yChannelSelector="B" result="ripples" />
+
+                        <feGaussianBlur in="ripples" width="600" height="600" stdDeviation="2" />
+                    </filter>
+
+                  
+                </defs>
+                <circle cx="100" cy="80" r="55" fill="#FF00dd" filter="url(#noiseFilter)" />
+        </svg>
+    </body>
+<html>
