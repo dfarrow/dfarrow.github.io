@@ -1,5 +1,4 @@
-// Function for jan31.html 
-
+// Functions for jan31.html  :: START
 var wasRun = false;
 
 function start() {
@@ -28,5 +27,11 @@ function start() {
             svgTransform: 'translate(10, 100) rotate(0, 50, 50)'}, 2000);
         
     }
- 
-}
+
+} 
+
+$("#yellowTriangle").click(function() { 
+     start(); 
+});
+
+// Functions for jan31.html  :: END
