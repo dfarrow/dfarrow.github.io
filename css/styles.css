@@ -22,3 +22,9 @@ a {
 li {
     margin-bottom: 5px;
 }
+
+.content {
+    text-align: left;
+    width: 600px;
+    margin: 10px auto;
+}
