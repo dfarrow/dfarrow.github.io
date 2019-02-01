@@ -1,17 +1,17 @@
 // Functions for jan31.html  :: START
 var wasRun = false;
+// Get a reference to the triangle
+var elTriangle = $("#yellowTriangle"); 
 
 function start() {
 
-    // Get a reference to the triangle
-    var elTriangle = $("#yellowTriangle"); 
+    
         
     if(!wasRun) {
-        wasRun = true;
-        var elTriangle = $("#yellowTriangle"); 
+        wasRun = true; 
         
         // Animate the SVG properties
-        $("#yellowTriangle").animate({svgWidth: 200, svgHeight: '30%', 
+    elTriangle.animate({svgWidth: 200, svgHeight: '30%', 
             svgStroke: 'aqua', 
             svgStrokeWidth: '+=7', 
             svgFill: 'red',
@@ -30,7 +30,7 @@ function start() {
 
 } 
 
-$("#yellowTriangle").click(function() { 
+elTriangle.click(function() { 
      start(); 
 });
 
