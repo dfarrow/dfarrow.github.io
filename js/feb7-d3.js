@@ -11,12 +11,12 @@ function createBar(newData) {
         .attr("y",  function(d, i) { return 300-d; })
         .attr("x", function(d, i) { return i * 100 + 10; })
         .attr("height", function(d) { return (d); })
-        .attr("width", 30); 
+        .attr("width", function(d) { return (d); }); 
 }
 
 // Data
-var dataSet1 = [21, 133, 51, 34, 148, 134];
-var dataSet2 = [124, 223, 65, 132, 221, 20];
+var dataSet1 = [21, 63, 51, 34, 54, 74];
+var dataSet2 = [76, 21, 65, 13, 141, 20];
 
 // Button handlers
 d3.select("#button1")
