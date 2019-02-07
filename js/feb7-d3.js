@@ -3,19 +3,23 @@ var svg = d3.select("svg");
 // Create the bar chart
 function createBar(newData) {  
 
-    var bars = svg.selectAll("rect").data([]); // Make selection
-    bars.exit().remove(); // Remove existing rects
-
-    var rectEnter = bars.data(newData).enter().append("rect");
-    rectEnter.attr("fill", function() { return randomColor()})
+   // var bars = svg.selectAll("rect").data([]); // Make selection
+    var bars = svg.selectAll("rect").data(newData); // Make selection
+   
+    var rectEnter = bars.enter().append("rect");
+    rectEnter.transition().attr("fill", function() { return randomColor()})
         .attr("y",  function(d, i) { return 300-d; })
         .attr("x", function(d, i) { return i * 100 + 10; })
         .attr("height", function(d) { return (d); })
         .attr("width", function(d) { return (d); }); 
+
+    bars.exit().remove(); // Remove existing. rects
+
+        
 }
 
 // Data
-var dataSet1 = [21, 63, 51, 34, 54, 74];
+var dataSet1 = [21, 63, 51, 34, 54];
 var dataSet2 = [76, 21, 65, 13, 54, 20];
 
 // Button handlers
