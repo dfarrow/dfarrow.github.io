@@ -16,7 +16,7 @@ function createBar(newData) {
 
 // Data
 var dataSet1 = [21, 63, 51, 34, 54, 74];
-var dataSet2 = [76, 21, 65, 13, 141, 20];
+var dataSet2 = [76, 21, 65, 13, 54, 20];
 
 // Button handlers
 d3.select("#button1")
