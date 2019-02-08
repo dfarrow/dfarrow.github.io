@@ -7,8 +7,6 @@ function createBar(newData) {
                 .selectAll("rect")
                 .data(newData); // Make selection
  
-    bars.exit().remove(); // Remove existing. rects
-
     bars.enter()
         .append("rect")
         .merge(bars)
@@ -19,6 +17,8 @@ function createBar(newData) {
         .attr("width", function(d) { return (d); }); 
 
    
+    bars.exit().remove(); // Remove existing. rects
+
      
 }
 
