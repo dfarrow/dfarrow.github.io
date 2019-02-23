@@ -11,22 +11,15 @@
     var scaleValue = 100;
     var xOffset = 0;
     var yOffset = 0;
-    
-    // Threshold shading and legend info    
-    var shadeValues = [ 
-      {"value": 1, "color": "#98fb2d" }, // green
-      {"value": 2, "color": "#fbf92d" }, // Yellow
-      {"value": 3, "color": "#fb892d" }, // Orange
-      {"value": 4, "color": "#ed3840" } // Red 
-    ];
-    
+   
     var isSetup = false;
     var zoom, drag, projection, path, svg, container;
     var totalProdColors;
 
     var geoJsonData, chartData = undefined; // GeoJSON and charting data objects  
     var featureValues = []; // List of values for each named feature (should come from API)
-    
+    var tooltip;
+
     function renderMap() {
     
         if(!isSetup) {
@@ -129,7 +122,7 @@
             .text("axis title");
 
           // Hover info panel
-          var tooltip = d3.select("body")
+          tooltip = d3.select("body")
             .append("div")
             .style("position", "absolute")
             .style("z-index", "10")
@@ -146,6 +139,17 @@
           $(".choro-container").on("mouseup", function() {
             $(this).removeClass("mouseMove");
           });
+ 
+          //Bind data and create one path per GeoJSON feature
+          container.selectAll("path")
+              .data(geoJsonData.features)                   
+              .call(drag)   
+              .enter()
+              .append("path")
+              .attr("d", path) 
+              .attr("class", "feature") 
+              .attr("transform", "translate(" + xOffset + ", " + yOffset + ")"); // Move this map into view because the projection is centered on US to start
+              
 
           isSetup = true;
         } // End if(!isSetup)...
@@ -153,16 +157,6 @@
         //Display in GeoJSON data
         function displayChart(json) {
         
-            //Bind data and create one path per GeoJSON feature
-            container.selectAll("path")
-               .data(json.features)                   
-               .call(drag)   
-               .enter()
-               .append("path")
-               .attr("d", path) 
-               .attr("class", "feature") 
-               .attr("transform", "translate(" + xOffset + ", " + yOffset + ")"); // Move this map into view because the projection is centered on US to start
-                
             container.selectAll("path") 
                   .each(function (d, i) { 
                       // Add information for display
@@ -221,47 +215,7 @@
         } // End displayChart()...
         
         displayChart(geoJsonData); // Run the displayChart() function...
-        
-        /*
-        // Create legend display     
-        var legendContainer = svg.append("g")  
-             .attr("class","legendContainer")
-             .attr("fill", "blue")
-             .attr("stroke", "gray")
-             .style("pointer-events", "all");
-        
-        // Add legend color rect
-        var legendBoxes = legendContainer.selectAll("g")
-             .data(shadeValues)  
-             .enter()
-             .append("g")
-             .attr("class","legendBox")
-             .append("rect")
-             .attr("width", lWidth)
-             .attr("height", lHeight)
-             .each(function (d, i) { 
-                var myRect = d3.select(this);  
-                myRect.style("fill", d.color) 
-                var lx = lPadding;
-                var ly = lPadding + (i * (lHeight + lPadding));
-                myRect.attr("transform", "translate(" + lx + ", " + ly + ")");
-            });    
-        
-        // Add legend text label
-        var legendBoxes = legendContainer.selectAll("g")
-             .append("text")
-             .attr("class","legendText")
-             .text("Legend Value")
-             .attr("height", lHeight)
-             .each(function (d, i) { 
-                var myText = d3.select(this);  
-                var lx = (2 * lPadding) + lWidth;
-                var ly = 16 + lPadding + (i * (lHeight + lPadding));
-                myText.attr("transform", "translate(" + lx + ", " + ly + ")"); 
-                myText.text(d.value);
-            });
-          */
-        
+       
     
     } // End renderMap()...
     
@@ -355,8 +309,7 @@
 
       select
       .on("change", function(d) {
-        var value = d3.select(this).property("value");
-        featureValues = [];
+        var value = d3.select(this).property("value"); 
         updateDisplay(value);
       });
 
@@ -374,7 +327,7 @@
 
    // Update the map display
    function updateDisplay(year) {
-      
+      featureValues = [];
       //console.log("geoJsonData", geoJsonData);
       //console.log("chartData", chartData);
 
@@ -403,29 +356,25 @@
       var currentData = groupByYear.filter(obj => {
         return obj.key == year.toString();
       })
-      console.log("Current Data", currentData[0].values);
+      console.log("Current Year Data", currentData[0].values);
       var currentYearData = currentData[0].values;
+ 
       // Assign state abbreviations to each shape
       $.each(geoJsonData.features, function(key, value) { 
           var featureName = value.properties[mapProp];
           var stateAbbr = value.properties["HASC_1"].split(".")[1]; 
-
+          
           var myDataRow = currentYearData.filter(obj => {
             return obj.state == stateAbbr;
           })
 
           var myVal = 0;
           if(myDataRow[0] != undefined) {
-            myVal = myDataRow[0].totalprod; // For testing;
+            myVal = myDataRow[0].totalprod; // Get total honey production
           }
           
-          if(featureValues.value == undefined) {
-            var dataObj = {"name": featureName, "value": myVal, "state": stateAbbr}; 
-            featureValues.push(dataObj);
-          } else { 
-            featureValues.value = myVal; 
-          }
- 
+          var dataObj = {"name": featureName, "value": myVal, "state": stateAbbr}; 
+          featureValues.push(dataObj); 
       });
 
       renderMap(); // Render the map
