@@ -1,4 +1,4 @@
-    var dataFileName = "data/vHoneyNeonic_v02.csv";
+    var dataFileName = "data/vHoneyNeonic_v03.csv";
     var geoFileName = "geojson/usa-states.json"; // GeoJSON data file
     var w = 800; // SVG Container width
     var h = 800; // SVG Container height
