@@ -15,6 +15,9 @@ h2 {
   font-size: 1.1em;
 }
 
+.slider {
+  width: 100%;
+}
 /* Chorpleth main SVG container */
 .choro-container {
     border: solid 1px #999;

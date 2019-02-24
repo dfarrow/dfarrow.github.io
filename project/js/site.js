@@ -52,9 +52,9 @@
           path = d3.geoPath()
                         .projection(projection);
 
-          var calcHeight = parseInt(window.innerHeight * .8);
+          var calcHeight = parseInt(window.innerHeight * .7);
           //Create SVG element
-          svg = d3.select("svg") 
+          svg1 = d3.select("#choropleth") 
                       .attr("width", "100%")
                       .attr("height", calcHeight)                        
                       .attr("class", "choro-container")
@@ -62,14 +62,14 @@
 
           
           // Create a container for the map
-          container = svg.append("g")
+          container = svg1.append("g")
               .style("pointer-events", "all");
 
 
           
           var wKey = 300, hKey = 50;
 
-          var myKey = svg.append("g")  
+          var myKey = svg1.append("g")  
               .attr("class","legendContainer")
               .attr("fill", "blue")
               .attr("stroke", "gray")
@@ -329,26 +329,29 @@
       
    });
 
+   
+
    // Update the map display
    function updateDisplay(year) {
       featureValues = []; 
 
-      d3.select("#yearInfo").text(year);
-
-      totalProdExtent = d3.extent(chartData.map(function(d){return parseFloat(d.totalprod);}));
-        console.log("totalProdExtent " , totalProdExtent);
-
-      totalProdColors = d3.scaleLinear()
-          .domain(totalProdExtent)
-          .range(['#FFF9CC', '#bc8600'])
-          .interpolate(d3.interpolateHcl); 
+      d3.select("#yearInfo").text(year); 
           
       mapProp = geoJsonData.properties.mapProp; // Propery name to map to on each geoJSON feature object
       scaleValue = geoJsonData.properties.scaleValue; // Map scaling
       xOffset = geoJsonData.properties.xOffset; // Map xoffset
       yOffset = geoJsonData.properties.yOffset; // Map yoffset
       
+      // DON'T NEED TO DO THESE EVERY TIME!! TODO: MOVE THEM
+      totalProdExtent = d3.extent(chartData.map(function(d){return parseFloat(d.totalprod);}));
+      console.log("totalProdExtent " , totalProdExtent);
 
+      totalProdColors = d3.scaleLinear()
+        .domain(totalProdExtent)
+        .range(['#FFF9CC', '#bc8600'])
+        .interpolate(d3.interpolateHcl); 
+
+        
       // d3.nest() groups data
       var groupByYear = d3.nest()
         .key(function(d) {
@@ -356,10 +359,25 @@
           })
           .entries(chartData);
       //console.log(groupByYear);
+       
+      groupByYear.forEach(function(d) {
+          d.total = d3.sum(d.values, function(d2) {
+              return d2.totalprod;
+          });
+          d.average = d3.mean(d.values, function(d3) {
+              return d3.totalprod;
+          });
+      }); 
 
       var currentData = groupByYear.filter(obj => {
         return obj.key == year.toString();
-      })
+      }) 
+      console.log("currentData ", currentData);
+      var ctFormat = d3.format(".2s");
+      d3.select("#totalProdInfo").text(ctFormat(currentData[0].total));  
+
+      d3.select("#avgProdInfo").text(ctFormat(currentData[0].average));  
+
       console.log("Current Year Data", currentData[0].values);
       var currentYearData = currentData[0].values;
  
