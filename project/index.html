@@ -3,19 +3,78 @@
   <head> 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <script src="https://d3js.org/d3.v4.js" type="text/javascript"></script>
     <script src="https://d3js.org/topojson.v1.min.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <title>Honey Production vs. Neonicotinoid Use in the United states (1991-2017)</title>
+    <title>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</title>
   </head>
   <body>
-    <div class="header">
-      <h1>Honey Production vs. Neonicotinoid Use in the United states (1991-2017)</h1>
+     
+     
+
+    <div class="container">
+      <!-- Row 1 -->
+      <div class="row">
+        <div class="col">
+          <div class="header">
+            <h1>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</h1>
+          </div>
+        </div> 
+      </div>
+      <!-- Row 2 -->
+      <div class="row">
+        <div class="col-10"> 
+            <!-- Visualization goes here -->
+            <svg></svg>
+               
+        </div>
+        <div class="col-2">
+          <div class="well">
+            <h2>Year: <span id="yearInfo" class="bigProp" ></span></h2>
+            <h2>Total Production: <span id="totalProdInfo" class="bigProp" >&nbsp;</span></h2> 
+            <h2>More Info: <span id="etcInfo" class="bigProp" >&nbsp;</span></h2> 
+          </div>
+          <br/>
+          <br/>
+          <div class="well">
+            <h2>Display Properties</h2>
+            <form>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1" checked="checked">
+                    <label class="form-check-label" for="exampleCheck1">Honey Production</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Variable 2</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1" >
+                    <label class="form-check-label" for="exampleCheck1">Variable 3</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1>
+                    <label class="form-check-label" for="exampleCheck1">Variable 4</label>
+                </div>
+            </form>
+          </div>
+        </div>
+        
+      </div>
+       <!-- Row 3 -->
+       <div class="row">
+          <div id="sliderColumn" class="col">
+            
+              Timeline Slider and Average Production Graph Goes here.
+          </div> 
+        </div>
     </div>
-    <div class="content">
-      <svg></svg>
-    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script type="text/javascript" src="js/site.js"></script>
   </body>
 </html>

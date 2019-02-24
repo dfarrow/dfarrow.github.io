@@ -14,7 +14,7 @@
    
     var isSetup = false;
     var zoom, drag, projection, path, svg, container;
-    var totalProdColors;
+    var totalProdColors, totalProdExtent;
 
     var geoJsonData, chartData = undefined; // GeoJSON and charting data objects  
     var featureValues = []; // List of values for each named feature (should come from API)
@@ -74,6 +74,7 @@
               .attr("fill", "blue")
               .attr("stroke", "gray")
               .style("pointer-events", "all")
+              .attr("x", 20)
               .attr("width", wKey)
               .attr("height", hKey);
       
@@ -100,11 +101,10 @@
             .attr("width", wKey)
             .attr("height", hKey - 30)
             .style("fill", "url(#gradient)")
-            .attr("transform", "translate(0,10)");
-      
+            .attr("transform", "translate(10,10)"); 
           var y = d3.scaleLinear()
-            .range([300, 0])
-            .domain([68, 12]);
+            .range([0,300])
+            .domain(totalProdExtent);
       
           var yAxis = d3.axisBottom()
             .scale(y)
@@ -112,14 +112,17 @@
       
           myKey.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(0,30)")
+            .attr("transform", "translate(10,30)")
             .call(yAxis)
+            .append("g")
+            .attr("transform", "translate(50,40)")
             .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 0)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text("axis title");
+            //.attr("transform", "rotate(-90)")
+            //.attr("y", 0)
+            //.attr("dy", ".71em")
+            //.style("text-anchor", "left")
+            .text("Honey Production (lbs)");
+            
 
           // Hover info panel
           tooltip = d3.select("body")
@@ -303,13 +306,15 @@
       listYears= listYears.sort(function(a, b){return a - b});
  
       // Create Year select dropdown 
-      var select = d3.select("body")
+      var select = d3.select("#sliderColumn")
         .append("div")
         .append("select")
 
       select
       .on("change", function(d) {
         var value = d3.select(this).property("value"); 
+ 
+
         updateDisplay(value);
       });
 
@@ -318,8 +323,7 @@
       .enter()
         .append("option")
         .attr("value", function (d) { return d; })
-        .text(function (d) { return d; });
-
+        .text(function (d) { return d; }); 
 
       updateDisplay(listYears[0]); // Call function to update display
       
@@ -327,11 +331,11 @@
 
    // Update the map display
    function updateDisplay(year) {
-      featureValues = [];
-      //console.log("geoJsonData", geoJsonData);
-      //console.log("chartData", chartData);
+      featureValues = []; 
 
-      var totalProdExtent = d3.extent(chartData.map(function(d){return parseFloat(d.totalprod);}));
+      d3.select("#yearInfo").text(year);
+
+      totalProdExtent = d3.extent(chartData.map(function(d){return parseFloat(d.totalprod);}));
         console.log("totalProdExtent " , totalProdExtent);
 
       totalProdColors = d3.scaleLinear()
