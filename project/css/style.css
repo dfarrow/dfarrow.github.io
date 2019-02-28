@@ -8,19 +8,9 @@ body p {
   font-size: 11px;
 }
 
-.custom-well {
-  padding-top: 10px;
-  border-top: solid 1px #CCCCCC;
-}
-
-.description-well {
-  margin-top: 35px;
-}
-
 h1 {
   font-size: 2em;
   margin: 0 0 20px 0;
-  color: #D35A04;
 }
 
 h2 {
@@ -30,12 +20,32 @@ h2 {
 .slider {
   width: 100%;
 }
+
 /* Chorpleth main SVG container */
 .choro-container {
     border: solid 1px #999;
     overflow: hidden;
     fill: #e6f2ff;
     background-color: #e6f2ff;
+}
+
+
+.custom-well {
+  padding-top: 10px;
+  border-top: solid 1px #CCCCCC;
+}
+
+.description-well {
+  margin-top: 35px;
+}
+
+.chart {
+  border: solid 1px #999999;
+  width: 100%;
+  height: 500px;
+  margin-top: 20px;
+  text-align: center;
+  background-color: #CCCCCC;
 }
 
 .bigProp {
