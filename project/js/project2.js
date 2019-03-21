@@ -1,5 +1,5 @@
 
-var currentYear = 1995;
+var currentYear = 1991;
 var isSetup = false;
 // Hover info panel
 var tooltip = d3.select("body")
@@ -14,7 +14,7 @@ var tooltip = d3.select("body")
 
  
 var mapContainerRect = d3.select("#my-map").node().parentNode.getBoundingClientRect();
-var w = mapContainerRect.width - 10;
+var w = mapContainerRect.width - 50;
 var h = mapContainerRect.height - 10;
 var data, usTopoJSON, geoJSON, container, featureValues;
 
@@ -52,19 +52,20 @@ d3.queue()
     //console.log(groupByYear);
     
     groupByYear.forEach(function(d) {
-        d.total = d3.sum(d.values, function(d2) {
+        d.totalYearProd = d3.sum(d.values, function(d2) {
             return d2.totalprod;
         });
-        d.average = d3.mean(d.values, function(d3) {
+        d.averageYearProd = d3.mean(d.values, function(d3) {
             return d3.totalprod;
         });
     }); 
   
-
+ 
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
     function updateMapData(year) {
+        d3.select("#yearInfo").text(year); 
 
         featureValues = []; // Reset array to hold current year data
 
@@ -72,11 +73,16 @@ d3.queue()
         var latestData = data.filter(function(d) {
             //console.log("d=", d);
             return d.year == year;
-        });
+        }); 
 
-        //console.log("updateMapData() ", latestData);
-
-
+        var yearData = groupByYear.filter(obj => {
+            return obj.key == year.toString();
+          }) 
+        
+        var ctFormat = d3.format(".2s");
+        d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalYearProd));   
+        d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageYearProd));
+ 
         // First time setup code
         if(!isSetup) { 
  
@@ -96,6 +102,7 @@ d3.queue()
             var path = d3.geoPath()
                 .projection(proj);
         
+        
             var svg = d3.select("#my-map")
                 .attr("width", w + "px")
                 .attr("height", h + "px")
@@ -103,6 +110,64 @@ d3.queue()
             var states = svg.selectAll("path")
                 .data(geoJSON.features);
             */
+           var wKey = 300, hKey = 50;
+
+           var myKey = svg.append("g")  
+            .attr("class","legendContainer")
+            .attr("fill", "blue")
+            .attr("stroke", "gray")
+            .style("pointer-events", "all") 
+            .attr("width", wKey)
+            .attr("height", hKey)
+            .attr("transform", "translate(0," + (h - hKey) + ")");
+
+            var legend = myKey.append("defs")
+            .append("svg:linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%")
+            .attr("y1", "100%")
+            .attr("x2", "100%")
+            .attr("y2", "100%")
+            .attr("spreadMethod", "pad");
+      
+          legend.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#FFF9CC")
+            .attr("stop-opacity", 1);
+  
+          legend.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#bc8600")
+            .attr("stop-opacity", 1);
+      
+          myKey.append("rect")
+            .attr("width", wKey)
+            .attr("height", hKey - 30)
+            .style("fill", "url(#gradient)")
+            .attr("transform", "translate(10,10)"); 
+          var y = d3.scaleLinear()
+            .range([0,300])
+            .domain(totalProdExtent);
+      
+          var yAxis = d3.axisBottom()
+            .scale(y)
+            .ticks(5)
+            .tickFormat(function(d) {
+                return d3.format(".2s")(d)
+            });
+      
+          myKey.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(10,30)")
+            .call(yAxis)
+            .append("g")
+            .attr("transform", "translate(50,40)")
+            .append("text")
+            //.attr("transform", "rotate(-90)")
+            //.attr("y", 0)
+            //.attr("dy", ".71em")
+            //.style("text-anchor", "left")
+            .text("Honey Production (lbs)");
                 
             // Create a container for the map
             states = svg.append("g")
@@ -247,8 +312,7 @@ d3.queue()
     rngYear.addEventListener("input", handleSlider, false);
     function handleSlider() {
         
-            currentYear = rngYear.value;
-            document.getElementById("yearInfo").textContent = currentYear;
+            currentYear = rngYear.value; 
             updateMapData(currentYear);
     
          
