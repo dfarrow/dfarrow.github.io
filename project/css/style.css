@@ -48,6 +48,10 @@ h2 {
    
 }
 
+.chart.map { 
+  background-color: #e6f2ff;
+}
+
 .bigProp {
   font-size: 2em;
   display: block;

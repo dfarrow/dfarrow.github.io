@@ -10,13 +10,16 @@ var tooltip = d3.select("body")
 .attr("class", " arrow_box shadow")
 .style("background", "#FFF")
 .text("a simple tooltip");
-
-
  
+var ctFormat = d3.format(".2s"); 
 var mapContainerRect = d3.select("#my-map").node().parentNode.getBoundingClientRect();
 var w = mapContainerRect.width - 50;
 var h = mapContainerRect.height - 10;
 var data, usTopoJSON, geoJSON, container, featureValues;
+var mapExtent, mapColors;
+var currentMapProp = "varHoneyProd"; // Selected radio button to show map data property values (should be ID of radiobutton)
+
+var mapSvg = d3.select("#my-map");
 
 d3.queue()
     .defer(d3.csv, "data/vHoneyNeonic_v03.csv") 
@@ -29,9 +32,22 @@ d3.queue()
        
     data.forEach(function(d) {
         d.year = parseInt(d.year);
+        if(d.nAllNeonic == NaN || d.nAllNeonic == "") {
+            d.nAllNeonic = 0;
+        }
         d.nAllNeonic = parseFloat(d.nAllNeonic);
+        //console.log("d.nAllNeonic", d.nAllNeonic);
+        if(d.numcol == NaN) {
+            d.numcol = 0;
+        }
         d.numcol = parseFloat(d.numcol);
+        if(d.totalprod == NaN) {
+            d.totalprod = 0;
+        } 
         d.totalprod = parseFloat(d.totalprod);
+        if(d.yieldpercol == NaN) {
+            d.yieldpercol = 0;
+        } 
         d.yieldpercol = parseFloat(d.yieldpercol);
     });
 
@@ -43,28 +59,66 @@ d3.queue()
         .range(['#FFF9CC', '#bc8600'])
         .interpolate(d3.interpolateHcl); 
 
+    totalNeoExtent = d3.extent(data.map(function(d){return parseFloat(d.nAllNeonic);}));
+        //console.log("totalProdExtent " , totalProdExtent);
+    
+    totalNeoColors = d3.scaleLinear()
+            .domain(totalNeoExtent)
+            .range(['#d1ffd4', '#07bf13'])
+            .interpolate(d3.interpolateHcl); 
+
+    var mapExtent, mapColors;
+
+    if(currentMapProp == "varHoneyProd") {
+        mapExtent = totalProdExtent;
+        mapColor = totalProdColors;
+    }
+    if(currentMapProp == "varNeonic") {
+        mapExtent = totalNeoExtent;
+        mapColor = totalNeoColors;
+    }
+
     // d3.nest() groups data
     var groupByYear = d3.nest()
         .key(function(d) {
             return d.year;
         })
-        .entries(data);
-    //console.log(groupByYear);
+        .entries(data); 
     
     groupByYear.forEach(function(d) {
         d.totalYearProd = d3.sum(d.values, function(d2) {
             return d2.totalprod;
         });
+
+        d.totalAllNeonic = d3.sum(d.values, function(d4) {
+            return d4.nAllNeonic;
+        });
+        
         d.averageYearProd = d3.mean(d.values, function(d3) {
             return d3.totalprod;
         });
+
+        d.averageAllNeonic = d3.mean(d.values, function(d5) {
+            return d5.nAllNeonic;
+        });
+
+        d.averageYearYieldPerCol = d3.mean(d.values, function(d6) {
+            return d6.yieldpercol;
+        });
+
+        d.totalYearNumCol = d3.sum(d.values, function(d7) {
+            return d7.numcol;
+        });
+ 
+
     }); 
   
- 
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-    function updateMapData(year) {
+    console.log(groupByYear);
+
+    ////////////////////////////////////////////////
+    ///// updateMapData() - Updates map on year change
+    ////////////////////////////////////////////////
+    function updateMapData(year, showProp) {
         d3.select("#yearInfo").text(year); 
 
         featureValues = []; // Reset array to hold current year data
@@ -79,11 +133,23 @@ d3.queue()
             return obj.key == year.toString();
           }) 
         
-        var ctFormat = d3.format(".2s");
-        d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalYearProd));   
-        d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageYearProd));
+
+        // SET MAP PROPERTY DISPLAY  
+        if(showProp == "varHoneyProd") {
+            d3.select(".propLabel1").text("Total Production (lbs)");
+            d3.select(".propLabel2").text("Avg Production (lbs)");
+            d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalYearProd));   
+            d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageYearProd));
+        }
+
+        if(showProp == "varNeonic") {
+            d3.select(".propLabel1").text("Total Neonicotinoids (lbs)");
+            d3.select(".propLabel2").text("Avg Neonicotinoids (lbs)");
+            d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalAllNeonic));   
+            d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageAllNeonic));
+        }
  
-        // First time setup code
+        // First time setup code only runs once
         if(!isSetup) { 
  
             // Convert topoJSON to geoJSON
@@ -103,16 +169,157 @@ d3.queue()
                 .projection(proj);
         
         
-            var svg = d3.select("#my-map")
+            mapSvg = d3.select("#my-map")
                 .attr("width", w + "px")
                 .attr("height", h + "px")
             /*
             var states = svg.selectAll("path")
                 .data(geoJSON.features);
             */
-           var wKey = 300, hKey = 50;
+           
+                
+            // Create a container for the map
+            states = mapSvg.append("g")
+                .style("pointer-events", "all");
 
-           var myKey = svg.append("g")  
+            //Bind data and create one path per GeoJSON feature
+            states.selectAll("path")
+                .data(geoJSON.features)                   
+                // .call(drag)   
+                .enter()
+                .append("path")
+                .attr("d", path) 
+                .attr("class", "feature");
+            
+            
+            isSetup = true;
+        } // End if(!isSetup) {...
+        
+        
+        createLegend(mapSvg);
+
+        // Get the featureValues collection of data for the current year 
+        $.each(geoJSON.features, function(key, value) { 
+            //console.log("value = ", value);
+            var stateAbbr = value.id;
+            
+            var myDataRow = latestData.filter(obj => {
+                return obj.state == stateAbbr;
+            })
+
+            var totalProdValue = 0;
+            if(myDataRow[0] != undefined) {
+                totalProdValue = myDataRow[0].totalprod; // Get total honey production
+            }
+
+            var totalAllNeonic = 0;
+            if(myDataRow[0] != undefined) {
+                totalAllNeonic = myDataRow[0].nAllNeonic; // Get total honey production
+            }
+            
+            var dataObj = {"name": stateAbbr, "totalprod": totalProdValue, "totalAllNeonic": totalAllNeonic, "state": stateAbbr}; 
+            featureValues.push(dataObj); 
+        }); 
+        // Create the map 
+        states.selectAll("path") 
+            .each(function (d, i) { 
+                // Add information for display 
+                var area = d.id.toLowerCase();
+                 
+                // Find the matching key in the list and get the value
+                var found = featureValues.find(function(element) {
+                return element.name.toLowerCase() == area.toLowerCase();
+                });
+                var infoString = "";
+                var showVal = 0;
+                var myPath = d3.select(this); 
+
+                if(showProp == "varHoneyProd") {
+                    // Color the shape and store the value in an attribute
+                    showVal = found.totalprod;
+                    var myColor = totalProdColors(showVal);  
+                }
+                if(showProp == "varNeonic") {
+                    // Color the shape and store the value in an attribute
+                    showVal = found.nAllNeonic;
+                    var myColor = totalProdColors(showVal);  
+                }
+                
+                if(showVal == 0) {
+                    myColor = "#CCCCCC"; // Show gray if no data
+                } 
+                myPath.style("fill", myColor);
+                myPath.attr("feature-value", showVal);  
+                infoString = area + "<br>Value: " + showVal;
+
+                // Set title for displaying info on hover
+                myPath.attr("title", infoString);
+                
+                myPath.text(function(d, infoString) { return infoString; })
+                .on("mouseenter", function(d, infoString){
+                    
+                    var area = d.id; 
+                                                
+                    // Highglight this bad boy
+                    $(this).addClass("highLight");
+                    /*                                
+                    if(!isIE11) {
+                            // Move the path to the front so the stroke in on top...
+                            // But if it is IE 11 don't do this because it messes up the "mouseout" event
+                            myPath.moveToFront();
+                    }
+                    */
+                    var myVal = myPath.attr("feature-value");
+
+                    // CHANGE BASED ON PROPERTY
+                    if(currentMapProp == "varHoneyProd") {
+                        var infoString = area + "<br>Total Honey Production: " + d3.format(".2s")(myVal); 
+                    }
+
+                    if(currentMapProp == "varNeonic") {
+                        var infoString = area + "<br>Total Neonic Use: " + d3.format(".2s")(myVal); 
+                    }
+
+                    tooltip.html(infoString); 
+                    return tooltip.style("display", "block");
+                    
+                })
+                .on("mousemove", function(){
+                    return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX+30)+"px");
+                })
+                .on("mouseout", function(){
+                        // This "mouseout" event doesn't fire in IE 11 from the <path> element in the map for some reason
+                        $(this).removeClass("highLight");
+                        return tooltip.style("display", "none");v
+                }); 
+        }); 
+        
+    } // End "updateMapData()"...
+    
+    updateMapData(currentYear, currentMapProp);
+
+    // Set up Year Slider
+    var rngYear = document.getElementById("rangeYear");
+    rngYear.addEventListener("change", handleSlider, false);
+    rngYear.addEventListener("input", handleSlider, false);
+
+    function handleSlider() { 
+            currentYear = rngYear.value; 
+            updateMapData(currentYear, currentMapProp); 
+    }
+
+    // Set up property radio buttons
+    var radioButtons = d3.selectAll("input[name='mapProp']").on("change", function(){
+        console.log(this.id);
+        currentMapProp = this.id;
+        updateMapData(currentYear, currentMapProp); 
+    });
+
+    function createLegend(mySvg) {
+        var wKey = 300, hKey = 50;
+        d3.select(".legendContainer").remove();
+
+        var myKey = mySvg.append("g")  
             .attr("class","legendContainer")
             .attr("fill", "blue")
             .attr("stroke", "gray")
@@ -147,7 +354,7 @@ d3.queue()
             .attr("transform", "translate(10,10)"); 
           var y = d3.scaleLinear()
             .range([0,300])
-            .domain(totalProdExtent);
+            .domain(mapExtent);
       
           var yAxis = d3.axisBottom()
             .scale(y)
@@ -168,154 +375,6 @@ d3.queue()
             //.attr("dy", ".71em")
             //.style("text-anchor", "left")
             .text("Honey Production (lbs)");
-                
-            // Create a container for the map
-            states = svg.append("g")
-                .style("pointer-events", "all");
-
-            //Bind data and create one path per GeoJSON feature
-            states.selectAll("path")
-                .data(geoJSON.features)                   
-                // .call(drag)   
-                .enter()
-                .append("path")
-                .attr("d", path) 
-                .attr("class", "feature");
-            
-            
-            isSetup = true;
-        } // End if(!isSetup) {...
-      
-        // Get the featureValues collection of data for the current year 
-        $.each(geoJSON.features, function(key, value) { 
-            //console.log("value = ", value);
-            var stateAbbr = value.id;
-            
-            var myDataRow = latestData.filter(obj => {
-                return obj.state == stateAbbr;
-            })
-
-            var totalProdValue = 0;
-            if(myDataRow[0] != undefined) {
-                totalProdValue = myDataRow[0].totalprod; // Get total honey production
-            }
-            
-            var dataObj = {"name": stateAbbr, "totalprod": totalProdValue, "state": stateAbbr}; 
-            featureValues.push(dataObj); 
-        });
-        //console.log("featureValues ", featureValues);
-    
-        // Create the map
-
-        states.selectAll("path") 
-                  .each(function (d, i) { 
-                      // Add information for display
-                      //console.log(d);
-                      var area = d.id.toLowerCase();
-                      
-                      //console.log("AREA = " + area);
-                       
-                      // Find the matching key in the list and get the value
-                      var found = featureValues.find(function(element) {
-                        return element.name.toLowerCase() == area.toLowerCase();
-                      });
-                       
-                      // Color the shape and store the value in an attribute
-                      var totalprod = found.totalprod;
-                      var myColor = totalProdColors(totalprod);  
-                      if(totalprod == 0) {
-                        myColor = "#CCCCCC";
-                      }
-
-                      //console.log("AREA = " + area + " color " + myColor);
-                      var myPath = d3.select(this); 
-                      myPath.style("fill", myColor);
-                      myPath.attr("feature-value", totalprod);
-                       
-                      var infoString = area + "<br>Value: " + totalprod;
-                      // Set title for displaying info on hover
-                      myPath.attr("title", infoString);
-                      
-                      myPath.text(function(d, infoString) { return infoString; })
-                        .on("mouseenter", function(d, infoString){
-                           
-                            var area = d.id; 
-                                                       
-                            // Highglight this bad boy
-                            $(this).addClass("highLight");
-                            /*                                
-                            if(!isIE11) {
-                                    // Move the path to the front so the stroke in on top...
-                                    // But if it is IE 11 don't do this because it messes up the "mouseout" event
-                                    myPath.moveToFront();
-                            }
-                            */
-                            var myVal = myPath.attr("feature-value");
-                            var infoString = area + "<br>Total Honey Production: " + d3.format(".2s")(myVal); ;
-                            tooltip.html(infoString); 
-                            return tooltip.style("display", "block");
-                            
-                            })
-                        .on("mousemove", function(){
-                            return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX+30)+"px");
-                            })
-                        .on("mouseout", function(){
-                                // This "mouseout" event doesn't fire in IE 11 from the <path> element in the map for some reason
-                                $(this).removeClass("highLight");
-                                return tooltip.style("display", "none");v
-                            }); 
-                        });
-               
-
-        /*
-        states.enter().append("path")
-            .attr("d", function(d) {
-                return path(d);
-            })
-            .attr("stroke", "#FFF")
-            .attr("fill", function(feature) {
-                var matches = latestData.filter(function(d) { 
-                    return d.state.toLowerCase() == feature.id.toLowerCase();
-                });
-                if(matches.length > 0) {
-                    return colorScale(matches[0].totalprod);
-                } else {
-                    return "rgb(200, 200, 200)";
-                }
-            })
-            .on("mouseenter", function(feature, infoString){
-                var matches = latestData.filter(function(d) { 
-                    return d.state.toLowerCase() == feature.id.toLowerCase();
-                });
-                var infoString = "";
-                if(matches.length > 0) {
-                    infoString = matches[0].state + ": " + matches[0].totalprod; 
-                } 
-                tooltip.html(infoString); 
-                return tooltip.style("display", "block");
-            })
-            .on("mousemove", function(){
-                return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX+30)+"px");
-                })
-            .on("mouseout", function(){
-                    // This "mouseout" event doesn't fire in IE 11 from the <path> element in the map for some reason
-                    return tooltip.style("display", "none");v
-            }); */
-        
-    }
-    
-    updateMapData(currentYear);
-
-    // Set up Year Slider
-    var rngYear = document.getElementById("rangeYear");
-    rngYear.addEventListener("change", handleSlider, false);
-    rngYear.addEventListener("input", handleSlider, false);
-    function handleSlider() {
-        
-            currentYear = rngYear.value; 
-            updateMapData(currentYear);
-    
-         
     }
             
     // Points drawn on map
