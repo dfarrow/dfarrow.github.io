@@ -20,6 +20,7 @@ var mapExtent, mapColors;
 var currentMapProp = "varHoneyProd"; // Selected radio button to show map data property values (should be ID of radiobutton)
 
 var mapSvg = d3.select("#my-map");
+ 
 
 d3.queue()
     .defer(d3.csv, "data/vHoneyNeonic_v03.csv") 
@@ -36,15 +37,18 @@ d3.queue()
             d.nAllNeonic = 0;
         }
         d.nAllNeonic = parseFloat(d.nAllNeonic);
-        //console.log("d.nAllNeonic", d.nAllNeonic);
+        console.log("d.nAllNeonic", d.nAllNeonic);
+
         if(d.numcol == NaN) {
             d.numcol = 0;
         }
         d.numcol = parseFloat(d.numcol);
+
         if(d.totalprod == NaN) {
             d.totalprod = 0;
         } 
         d.totalprod = parseFloat(d.totalprod);
+
         if(d.yieldpercol == NaN) {
             d.yieldpercol = 0;
         } 
@@ -60,23 +64,12 @@ d3.queue()
         .interpolate(d3.interpolateHcl); 
 
     totalNeoExtent = d3.extent(data.map(function(d){return parseFloat(d.nAllNeonic);}));
-        //console.log("totalProdExtent " , totalProdExtent);
+       console.log("totalNeoExtent " , totalNeoExtent);
     
     totalNeoColors = d3.scaleLinear()
             .domain(totalNeoExtent)
-            .range(['#d1ffd4', '#07bf13'])
+            .range(['#FFFFFF', '#07bf13'])
             .interpolate(d3.interpolateHcl); 
-
-    var mapExtent, mapColors;
-
-    if(currentMapProp == "varHoneyProd") {
-        mapExtent = totalProdExtent;
-        mapColor = totalProdColors;
-    }
-    if(currentMapProp == "varNeonic") {
-        mapExtent = totalNeoExtent;
-        mapColor = totalNeoColors;
-    }
 
     // d3.nest() groups data
     var groupByYear = d3.nest()
@@ -131,22 +124,30 @@ d3.queue()
 
         var yearData = groupByYear.filter(obj => {
             return obj.key == year.toString();
-          }) 
-        
+          });
+    
+        console.log(yearData);
 
+        
+  
         // SET MAP PROPERTY DISPLAY  
         if(showProp == "varHoneyProd") {
             d3.select(".propLabel1").text("Total Production (lbs)");
             d3.select(".propLabel2").text("Avg Production (lbs)");
             d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalYearProd));   
             d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageYearProd));
+            
+            mapExtent = totalProdExtent;
+            mapColors = totalProdColors;
         }
 
         if(showProp == "varNeonic") {
-            d3.select(".propLabel1").text("Total Neonicotinoids (lbs)");
-            d3.select(".propLabel2").text("Avg Neonicotinoids (lbs)");
+            d3.select(".propLabel1").text("Total Neonicotinoids (kg)");
+            d3.select(".propLabel2").text("Avg Neonicotinoids (kg)");
             d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalAllNeonic));   
             d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageAllNeonic));
+            mapExtent = totalNeoExtent;
+            mapColors = totalNeoColors;
         }
  
         // First time setup code only runs once
@@ -167,8 +168,7 @@ d3.queue()
             // Create a path from the projection!
             var path = d3.geoPath()
                 .projection(proj);
-        
-        
+         
             mapSvg = d3.select("#my-map")
                 .attr("width", w + "px")
                 .attr("height", h + "px")
@@ -220,6 +220,7 @@ d3.queue()
             var dataObj = {"name": stateAbbr, "totalprod": totalProdValue, "totalAllNeonic": totalAllNeonic, "state": stateAbbr}; 
             featureValues.push(dataObj); 
         }); 
+        
         // Create the map 
         states.selectAll("path") 
             .each(function (d, i) { 
@@ -228,26 +229,30 @@ d3.queue()
                  
                 // Find the matching key in the list and get the value
                 var found = featureValues.find(function(element) {
-                return element.name.toLowerCase() == area.toLowerCase();
+                    return element.name.toLowerCase() == area.toLowerCase();
                 });
                 var infoString = "";
                 var showVal = 0;
                 var myPath = d3.select(this); 
-
+                //console.log(found);
                 if(showProp == "varHoneyProd") {
                     // Color the shape and store the value in an attribute
                     showVal = found.totalprod;
-                    var myColor = totalProdColors(showVal);  
+                    //console.log("varHoneyProd showVal " + showVal);
+                    var myColor = mapColors(showVal); 
+                    
+                    if(showVal == 0) {
+                        myColor = "#CCCCCC"; // Show gray if no data
+                    } 
                 }
                 if(showProp == "varNeonic") {
                     // Color the shape and store the value in an attribute
-                    showVal = found.nAllNeonic;
-                    var myColor = totalProdColors(showVal);  
+                    showVal = found.totalAllNeonic;
+                    //console.log("varNeonic showVal " + showVal);
+                    var myColor = mapColors(showVal);  
                 }
                 
-                if(showVal == 0) {
-                    myColor = "#CCCCCC"; // Show gray if no data
-                } 
+                
                 myPath.style("fill", myColor);
                 myPath.attr("feature-value", showVal);  
                 infoString = area + "<br>Value: " + showVal;
@@ -277,7 +282,7 @@ d3.queue()
                     }
 
                     if(currentMapProp == "varNeonic") {
-                        var infoString = area + "<br>Total Neonic Use: " + d3.format(".2s")(myVal); 
+                        var infoString = area + "<br>Total Neonicotinoid Use: " + d3.format(".2s")(myVal); 
                     }
 
                     tooltip.html(infoString); 
@@ -316,6 +321,8 @@ d3.queue()
     });
 
     function createLegend(mySvg) {
+
+        console.log("CREATE LEGEND");
         var wKey = 300, hKey = 50;
         d3.select(".legendContainer").remove();
 
@@ -339,12 +346,12 @@ d3.queue()
       
           legend.append("stop")
             .attr("offset", "0%")
-            .attr("stop-color", "#FFF9CC")
+            .attr("stop-color", mapColors.range()[0])
             .attr("stop-opacity", 1);
   
           legend.append("stop")
             .attr("offset", "100%")
-            .attr("stop-color", "#bc8600")
+            .attr("stop-color", mapColors.range()[1])
             .attr("stop-opacity", 1);
       
           myKey.append("rect")
@@ -362,19 +369,24 @@ d3.queue()
             .tickFormat(function(d) {
                 return d3.format(".2s")(d)
             });
-      
+
+          var keyLabel = "Honey Production (lbs)";
+          if(currentMapProp == "varNeonic") {
+            keyLabel = "Neonicotinoid Use (kg)";
+          }
+
           myKey.append("g")
             .attr("class", "y axis")
             .attr("transform", "translate(10,30)")
             .call(yAxis)
             .append("g")
-            .attr("transform", "translate(50,40)")
+            .attr("transform", "translate(50,-28)")
             .append("text")
             //.attr("transform", "rotate(-90)")
             //.attr("y", 0)
             //.attr("dy", ".71em")
             //.style("text-anchor", "left")
-            .text("Honey Production (lbs)");
+            .text(keyLabel);
     }
             
     // Points drawn on map
