@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JavaScript Test Page</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+ 
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <title>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+        <script src="https://d3js.org/topojson.v1.min.js" type="text/javascript"></script>
+       
+    </head>
+    <body> 
+
+        <div class="container">
+            <!-- Row 1 -->
+            <div class="row">
+              <div class="col">
+                <div class="header">
+                  <h1>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</h1>
+                </div>
+              </div> 
+            </div>
+            <!-- Row 2 -->
+            <div class="row">
+              <div class="col-10"> 
+                  <!-- Tabs here -->
+                  <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Map</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Bar</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Line</a>
+                    </li>
+                  </ul>
+      
+                  <!-- Tab content - Visualizations goes here -->
+                  <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                      <!-- Choropleth MAP Visualization-->
+                      <div id="content" class="chart" >
+                        <svg id="my-map"> 
+                        </svg>
+                      </div>
+      
+                      <div id="sliderColumn" class="col">
+                  
+                          <div class="slidecontainer">
+                            <input type="range" min="1991" max="2017" value="1991" class="slider" id="myRange">
+                          </div>
+                      </div> 
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                      <div id="bar-container" class="chart bar"></div>
+                    </div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                      <div class="chart line-container">Line Chart</div>
+                    </div>
+                  </div>
+                  
+                  
+                     
+              </div>
+              <div class="col-2">
+                <div class="custom-well description-well">
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla leo nunc, eu volutpat orci fringilla ac. Donec nec nibh quis diam feugiat lobortis. Fusce in hendrerit neque. Phasellus nec porta augue, nec maximus dolor. Sed convallis porta felis sit amet fermentum. Nunc pharetra, felis at imperdiet tempus, orci est semper enim.
+                  </p>
+      
+                </div> 
+                <div class="custom-well">
+                  <h2>Year: <span id="yearInfo" class="bigProp" ></span></h2>
+                  <h2>Total Production (lbs): <span id="totalProdInfo" class="bigProp" >&nbsp;</span></h2> 
+                  <h2>Average Production (lbs): <span id="avgProdInfo" class="bigProp" >&nbsp;</span></h2> 
+                </div> 
+                <div class="custom-well">
+                  <h2>Display Properties</h2>
+                  <form>
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="exampleCheck1" checked="checked">
+                          <label class="form-check-label" for="exampleCheck1">Honey Production</label>
+                      </div>
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                          <label class="form-check-label" for="exampleCheck1">Variable 2</label>
+                      </div>
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="exampleCheck1" >
+                          <label class="form-check-label" for="exampleCheck1">Variable 3</label>
+                      </div>
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="exampleCheck1>
+                          <label class="form-check-label" for="exampleCheck1">Variable 4</label>
+                      </div>
+                  </form>
+                </div>
+              </div>
+              
+            </div>
+             <!-- Row 3 -->
+             <div class="row">
+                <div class="col">
+                  <!-- Footer content... -->
+                </div>
+              </div>
+          </div>
+      
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+          <script type="text/javascript" src="js/project1.js"></script>
+         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        <div id="tooltip" style="position: absolute; border: solid 1px #CCCCCC; padding: 5px; display: none">
+            Tooltip content.
+        </div>
+     
+    </body>
+  
+</html>

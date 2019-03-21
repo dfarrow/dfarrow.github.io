@@ -116,3 +116,47 @@ h2 {
 .mouseMove {
   cursor: move;
 }
+
+
+/* Pointy box for hover */
+.arrow_box {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #2acafd;
+  min-width: 80px;
+  min-height: 70px;
+  padding: 10px;
+  font-family: arial, sans;
+  font-size: 1em;
+}
+
+.arrow_box:after, .arrow_box:before {
+  right: 100%;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.arrow_box:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-right-color: #ffffff;
+  border-width: 14px;
+  margin-top: -14px;
+}
+
+.arrow_box:before {
+border-color: rgba(44, 191, 245, 0);
+border-right-color: #2cbff5;
+border-width: 17px;
+margin-top: -17px;
+}
+
+.shadow {
+-webkit-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+-moz-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+}

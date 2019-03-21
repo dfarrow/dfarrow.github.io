@@ -42,8 +42,9 @@ d3.queue()
 
     console.log(geoJSON);
     
-    var w = window.innerWidth - 10;
-    var h = 600;
+    var mapContainerRect = d3.select("#my-map").node().parentNode.getBoundingClientRect();
+    var w = mapContainerRect.width - 10;
+    var h = mapContainerRect.height - 10;
 
     
     // Create a map projection from the geoJSON
@@ -53,6 +54,9 @@ d3.queue()
     // Create a path from the projection!
     var path = d3.geoPath()
         .projection(proj);
+
+    var mapContainerWidth = d3.select("#my-map").node().parentNode.getBoundingClientRect().width;
+    console.log("RECT", mapContainerWidth);
     
     var svg = d3.select("#my-map")
         .attr("width", w + "px")
