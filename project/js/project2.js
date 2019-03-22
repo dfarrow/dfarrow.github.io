@@ -36,8 +36,7 @@ d3.queue()
         if(d.nAllNeonic == NaN || d.nAllNeonic == "") {
             d.nAllNeonic = 0;
         }
-        d.nAllNeonic = parseFloat(d.nAllNeonic);
-        console.log("d.nAllNeonic", d.nAllNeonic);
+        d.nAllNeonic = parseFloat(d.nAllNeonic); 
 
         if(d.numcol == NaN) {
             d.numcol = 0;
@@ -67,9 +66,9 @@ d3.queue()
        console.log("totalNeoExtent " , totalNeoExtent);
     
     totalNeoColors = d3.scaleLinear()
-            .domain(totalNeoExtent)
-            .range(['#FFFFFF', '#07bf13'])
-            .interpolate(d3.interpolateHcl); 
+        .domain(totalNeoExtent)
+        .range(['#FFFFFF', '#07bf13'])
+        .interpolate(d3.interpolateHcl); 
 
     // d3.nest() groups data
     var groupByYear = d3.nest()
@@ -242,7 +241,7 @@ d3.queue()
                     var myColor = mapColors(showVal); 
                     
                     if(showVal == 0) {
-                        myColor = "#CCCCCC"; // Show gray if no data
+                        myColor = "#EEEEEE"; // Show gray if no data
                     } 
                 }
                 if(showProp == "varNeonic") {
@@ -407,4 +406,181 @@ d3.queue()
         .attr("r", 7)
         .attr("fill", "blue");
         */
+
+    // END OF MAP
+
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+    // LINE CHART   
+    
+    var isLineCreated = false;
+    var lineTab = document.getElementById("line-tab");
+    lineTab.addEventListener("click", function() {
+        if(!isLineCreated) {
+            isLineCreated = true;
+            createLineChart();
+        }        
+    });
+
+    function createLineChart() {
+        
+        var lineContainer = d3.select("#line-container");
+        //var wLine = lineContainer.node().getClientRects()[0].width;
+        //var hLine = lineContainer.node().getClientRects()[0].height;
+        var wLine = 920;
+        var hLine = 500;
+        console.log(" wLine ", lineContainer.node().getBoundingClientRect())
+        // set the dimensions and margins of the graph
+        var marginBar = {top: 20, right: 20, bottom: 60, left: 80},
+        width = wLine - marginBar.left - marginBar.right,
+        height = hLine - marginBar.top - marginBar.bottom;
+
+        var parseTime = d3.timeParse("%yyyy");
+ 
+        // set the ranges
+        var x = d3.scaleLinear().range([0, width]);
+        var y = d3.scaleLinear().range([height, 0]);
+
+        var lineData = groupByYear;
+
+        lineData.forEach(function(d) {
+            d.year = parseInt(d.key);
+            d.displayYear = parseTime(d.key); 
+        });
+
+        lineData.sort(function(x, y){
+            return d3.ascending(x.year, y.year);
+         })
+        console.log("lineData", lineData);
+
+
+        // define the line
+        var valueline = d3.line()
+        .x(function(d) { return x(d.year); })
+        .y(function(d) { return y(d.totalYearProd); });
+
+        // append the svg obgect to the body of the page
+        // appends a 'group' element to 'svg'
+        // moves the 'group' element to the top left margin
+        var svg2 = lineContainer.append("svg")
+        .attr("width", width + marginBar.left + marginBar.right)
+        .attr("height", height + marginBar.top + marginBar.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + marginBar.left + "," + marginBar.top + ")");
+        // Scale the range of the data
+        x.domain(d3.extent(lineData, function(d) { return d.year; }));
+        y.domain([0, d3.max(lineData, function(d) { return d.totalYearProd; })]);
+        
+        // Add the valueline path.
+        svg2.append("path")
+        .data([lineData])
+        .attr("class", "line")
+        .attr('stroke', "#bc8600") 
+        .attr("fill", "none")
+        .attr("d", valueline);
+
+        console.log("add X axis");
+        // Add the X Axis
+        svg2.append("g")
+        .attr("transform", "translate(0," + height + ")") 
+        .call(d3.axisBottom(x)
+          //  .tickFormat(d3.format(".0s"))
+            ) ;
+
+        console.log("add Y axis");
+        // Add the Y Axis
+        svg2.append("g")
+        .call(d3.axisLeft(y));
+    }
+    
+
+    /////////////////////////////////////////////
+    /////////////////////////////////////////////
+    /////////////////////////////////////////////
+    // Bar Chart 
+
+    var isBarCreated = false;
+    var barTab = document.getElementById("bar-tab");
+    barTab.addEventListener("click", function() {
+        if(!isBarCreated) {
+            isBarCreated = true;
+            createBarChart();
+        }        
+    });
+
+    function createBarChart() {
+
+        var barContainer = d3.select("#bar-container");
+
+        // set the dimensions and margins of the graph
+        var margin = {top: 20, right: 20, bottom: 60, left: 80},
+        width = 920 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+        // set the ranges
+        var x = d3.scaleBand()
+            .range([0, width])
+            .padding(0.1);
+        var y = d3.scaleLinear()
+            .range([height, 0]);
+            
+        // append the svg object to the body of the page
+        // append a 'group' element to 'svg'
+        // moves the 'group' element to the top left margin
+        var svg3 = barContainer.append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", 
+            "translate(" + margin.left + "," + margin.top + ")");
+
+        var barData = groupByYear;
+        // format the data
+        barData.forEach(function(d) {            
+            d.year = parseInt(d.key);
+            //d.displayYear = parseTime(d.key); 
+            d.totalYearProd = d.totalYearProd;
+        });
+
+         
+        barData.sort(function(x, y){
+            return d3.ascending(x.year, y.year);
+        })
+
+        console.log("barData");
+
+        // Scale the range of the data in the domains
+        x.domain(barData.map(function(d) { return d.year; }));
+        y.domain([0, d3.max(barData, function(d) { return d.totalYearProd; })]);
+
+        // append the rectangles for the bar chart
+        svg3.selectAll(".bar")
+        .data(barData)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("fill", "#bc8600")
+        .attr("x", function(d) { return x(d.year); })
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return y(d.totalYearProd); })
+        .attr("height", function(d) { return height - y(d.totalYearProd); });
+
+        // add the x Axis
+        svg3.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+        // add the y Axis
+        svg3.append("g")
+        .call(d3.axisLeft(y));
+ 
+
+    }
+
+
+
+
+
+    // END OF LINE CHART CODE
+
 });
