@@ -6,7 +6,7 @@ body {
 }
 
 body p {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 h1 {
@@ -30,14 +30,34 @@ h2 {
     background-color: #e6f2ff;
 }
 
+.bg-image {
+
+  background-image: url(/project/images/bee.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  position: absolute;
+  right: 0%;
+  top: 0;
+  width: 16%;
+  height: 100%;
+  z-index: -100;
+}
+
+.footer {
+    color: #999999;
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px #EEEEEE solid;
+    margin-top: 40px;
+}
 
 .custom-well {
   padding-top: 10px;
-  border-top: solid 1px #CCCCCC;
+  border-top: solid 1px #CCCCCC; 
 }
 
 .description-well {
-  margin-top: 35px;
+  margin-top: 42px;
 }
 
 .chart {

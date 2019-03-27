@@ -21,6 +21,7 @@ var currentMapProp = "varHoneyProd"; // Selected radio button to show map data p
 
 var mapSvg = d3.select("#my-map");
  
+var fnCreateLine, fnCreateBar;
 
 d3.queue()
     .defer(d3.csv, "data/vHoneyNeonic_v03.csv") 
@@ -418,18 +419,21 @@ d3.queue()
     lineTab.addEventListener("click", function() {
         if(!isLineCreated) {
             isLineCreated = true;
-            createLineChart();
+            setTimeout("fnCreateLine()", 300); // Call after slight delay to render before height/width
         }        
     });
 
     function createLineChart() {
         
         var lineContainer = d3.select("#line-container");
-        //var wLine = lineContainer.node().getClientRects()[0].width;
-        //var hLine = lineContainer.node().getClientRects()[0].height;
-        var wLine = 920;
-        var hLine = 500;
-        console.log(" wLine ", lineContainer.node().getBoundingClientRect())
+        var wLine = lineContainer.node().getClientRects()[0].width;
+        var hLine = lineContainer.node().getClientRects()[0].height;
+
+        console.log("wLine = " + wLine);
+        //var wLine = 920;
+        //var hLine = 500; 
+
+
         // set the dimensions and margins of the graph
         var marginBar = {top: 20, right: 20, bottom: 60, left: 80},
         width = wLine - marginBar.left - marginBar.right,
@@ -494,6 +498,8 @@ d3.queue()
         .call(d3.axisLeft(y));
     }
     
+    
+    fnCreateLine = createLineChart; // store this function in a global var for calling via settimeout
 
     /////////////////////////////////////////////
     /////////////////////////////////////////////
@@ -505,18 +511,20 @@ d3.queue()
     barTab.addEventListener("click", function() {
         if(!isBarCreated) {
             isBarCreated = true;
-            createBarChart();
+            setTimeout("fnCreateBar()", 300); // Call after slight delay to render before height/width
         }        
     });
+
 
     function createBarChart() {
 
         var barContainer = d3.select("#bar-container");
-
+        var width = barContainer.node().getClientRects()[0].width;
+        var height = barContainer.node().getClientRects()[0].height;
         // set the dimensions and margins of the graph
         var margin = {top: 20, right: 20, bottom: 60, left: 80},
-        width = 920 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = width - margin.left - margin.right,
+        height = height - margin.top - margin.bottom;
 
         // set the ranges
         var x = d3.scaleBand()
@@ -577,7 +585,7 @@ d3.queue()
 
     }
 
-
+    fnCreateBar = createBarChart; // store this function in a global var for calling via settimeout
 
 
 
