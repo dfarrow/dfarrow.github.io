@@ -463,14 +463,26 @@ d3.queue()
          })
         console.log("lineData", lineData);
 
-
+        var valueline;
+        var lineColor;
+        if(currentMapProp == "varHoneyProd") {
         // define the line
-        var valueline = d3.line()
+            valueline = d3.line()
             .x(function(d) { return x(d.year); })
             .y(function(d) { return y(d.totalYearProd); });
-        myTemp = valueline
-        
 
+             y.domain([0, d3.max(lineData, function(d) { return d.totalYearProd; })]);
+             lineColor = "#bc8600";
+        }
+
+        if(currentMapProp == "varNeonic") {
+            valueline = d3.line()
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.totalAllNeonic); });
+
+            y.domain([0, d3.max(lineData, function(d) { return d.totalAllNeonic; })]);
+            lineColor = "#00FF00";
+        }
         // append the svg obgect to the body of the page
         // appends a 'group' element to 'svg'
         // moves the 'group' element to the top left margin
@@ -482,8 +494,7 @@ d3.queue()
             "translate(" + marginBar.left + "," + marginBar.top + ")");
         // Scale the range of the data
         x.domain(d3.extent(lineData, function(d) { return d.year; }));
-        y.domain([0, d3.max(lineData, function(d) { return d.totalYearProd; })]);
-        
+       
         console.log("+++++++++++++++++++++++++++");
         console.log("LINE CHART passing this data to line function" , lineData)
         console.log("+++++++++++++++++++++++++++");
@@ -491,9 +502,10 @@ d3.queue()
         svg2.append("path")
         .data([lineData])
         .attr("class", "line")
-        .attr('stroke', "#bc8600") 
+        .attr('stroke', lineColor) 
         .attr("fill", "none")
         .attr("d", valueline);
+ 
 
         console.log("=========================================== LINE CHART");
         console.log("Graphing 'lineData' ", lineData);
@@ -566,6 +578,7 @@ d3.queue()
             d.year = parseInt(d.key);
             //d.displayYear = parseTime(d.key); 
             d.totalYearProd = d.totalYearProd;
+            d.totalAllNeonic = d.totalAllNeonic;
         });
 
          
@@ -573,22 +586,60 @@ d3.queue()
             return d3.ascending(x.year, y.year);
         })
 
-        console.log("barData");
+        console.log("barData = ", barData);
+
+        var valueBar;
+        var barColor;
+        var yVal;
+        if(currentMapProp == "varHoneyProd") {
+        // define the line
+            valueBar = d3.line()
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.totalYearProd); });
+
+            y.domain([0, d3.max(barData, function(d) { return d.totalYearProd; })]);
+            barColor = "#bc8600";
+            
+        
+        }
+
+        if(currentMapProp == "varNeonic") {
+            valueBar = d3.line()
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.totalAllNeonic); });
+
+            y.domain([0, d3.max(barData, function(d) { return d.totalAllNeonic; })]);
+            barColor = "#00FF00";
+        }
 
         // Scale the range of the data in the domains
         x.domain(barData.map(function(d) { return d.year; }));
-        y.domain([0, d3.max(barData, function(d) { return d.totalYearProd; })]);
-
+        
+        
         // append the rectangles for the bar chart
         svg3.selectAll(".bar")
         .data(barData)
         .enter().append("rect")
         .attr("class", "bar")
-        .attr("fill", "#bc8600")
+        .attr("fill", barColor)
         .attr("x", function(d) { return x(d.year); })
         .attr("width", x.bandwidth())
-        .attr("y", function(d) { return y(d.totalYearProd); })
-        .attr("height", function(d) { return height - y(d.totalYearProd); });
+        .attr("y", function(d) { 
+                if(currentMapProp == "varHoneyProd") {
+                    return y(d.totalYearProd); 
+                }
+                if(currentMapProp == "varNeonic") {
+                    return y(d.totalAllNeonic); 
+                }
+            })
+        .attr("height", function(d) { 
+                if(currentMapProp == "varHoneyProd") {
+                    return height - y(d.totalYearProd); 
+                }
+                if(currentMapProp == "varNeonic") {
+                    return height - y(d.totalAllNeonic); 
+                }
+        });
 
         // add the x Axis
         svg3.append("g")
