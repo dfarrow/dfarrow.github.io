@@ -1,4 +1,4 @@
-
+var myTemp;
 var currentYear = 1991;
 var isSetup = false;
 // Hover info panel
@@ -70,7 +70,7 @@ d3.queue()
         .domain(totalNeoExtent)
         .range(['#FFFFFF', '#07bf13'])
         .interpolate(d3.interpolateHcl); 
-
+  
     // d3.nest() groups data
     var groupByYear = d3.nest()
         .key(function(d) {
@@ -106,7 +106,17 @@ d3.queue()
 
     }); 
   
-    console.log(groupByYear);
+  
+
+    var groupByStateYear = d3.nest()
+        .key(function(d) {
+            return d.state;
+        })
+        .key(function(d) {
+            return d.year;
+        })
+        .entries(data); 
+ 
 
     ////////////////////////////////////////////////
     ///// updateMapData() - Updates map on year change
@@ -125,10 +135,7 @@ d3.queue()
         var yearData = groupByYear.filter(obj => {
             return obj.key == year.toString();
           });
-    
-        console.log(yearData);
-
-        
+     
   
         // SET MAP PROPERTY DISPLAY  
         if(showProp == "varHoneyProd") {
@@ -315,14 +322,14 @@ d3.queue()
 
     // Set up property radio buttons
     var radioButtons = d3.selectAll("input[name='mapProp']").on("change", function(){
-        console.log(this.id);
+      
         currentMapProp = this.id;
         updateMapData(currentYear, currentMapProp); 
     });
 
     function createLegend(mySvg) {
-
-        console.log("CREATE LEGEND");
+        
+        // TODO : Check for existing legend
         var wKey = 300, hKey = 50;
         d3.select(".legendContainer").remove();
 
@@ -428,8 +435,7 @@ d3.queue()
         var lineContainer = d3.select("#line-container");
         var wLine = lineContainer.node().getClientRects()[0].width;
         var hLine = lineContainer.node().getClientRects()[0].height;
-
-        console.log("wLine = " + wLine);
+ 
         //var wLine = 920;
         //var hLine = 500; 
 
@@ -460,8 +466,10 @@ d3.queue()
 
         // define the line
         var valueline = d3.line()
-        .x(function(d) { return x(d.year); })
-        .y(function(d) { return y(d.totalYearProd); });
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.totalYearProd); });
+        myTemp = valueline
+        
 
         // append the svg obgect to the body of the page
         // appends a 'group' element to 'svg'
@@ -476,6 +484,9 @@ d3.queue()
         x.domain(d3.extent(lineData, function(d) { return d.year; }));
         y.domain([0, d3.max(lineData, function(d) { return d.totalYearProd; })]);
         
+        console.log("+++++++++++++++++++++++++++");
+        console.log("LINE CHART passing this data to line function" , lineData)
+        console.log("+++++++++++++++++++++++++++");
         // Add the valueline path.
         svg2.append("path")
         .data([lineData])
@@ -483,6 +494,10 @@ d3.queue()
         .attr('stroke', "#bc8600") 
         .attr("fill", "none")
         .attr("d", valueline);
+
+        console.log("=========================================== LINE CHART");
+        console.log("Graphing 'lineData' ", lineData);
+        console.log("LINE valueline = " , valueline);
 
         console.log("add X axis");
         // Add the X Axis
@@ -589,6 +604,182 @@ d3.queue()
 
 
 
-    // END OF LINE CHART CODE
+    // END OF BAR CHART CODE
+
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    // START OF STATE CHART CODE
+    var isStateCreated = false;
+    var stateTab = document.getElementById("state-tab");
+    stateTab.addEventListener("click", function() {
+        if(!isStateCreated) {
+            isStateCreated = true;
+            setTimeout("fnCreateState()", 300); // Call after slight delay to render before height/width
+        }        
+    });
+
+    function createStateChart() {
+        
+        var stateContainer = d3.select("#state-container");
+        var wLine = stateContainer.node().getClientRects()[0].width;
+        var hLine = stateContainer.node().getClientRects()[0].height;
+
+        console.log("wLine = " + wLine);
+        //var wLine = 920;
+        //var hLine = 500; 
+
+
+        // set the dimensions and margins of the graph
+        var marginBar = {top: 20, right: 20, bottom: 60, left: 80},
+        width = wLine - marginBar.left - marginBar.right,
+        height = hLine - marginBar.top - marginBar.bottom;
+
+        var parseTime = d3.timeParse("%yyyy");
+ 
+        // set the ranges
+        var x = d3.scaleLinear().range([0, width]);
+        var y = d3.scaleLinear().range([height, 0]);
+
+        console.log("groupByStateYear = ", groupByStateYear);/*
+        groupByStateYear.values.sort(function(x, y){
+            return d3.ascending(x.year, y.year);
+         }) */
+
+         var stateLineData = [];
+         var valueLineData = [];
+         console.log("==================================");
+         console.log("STATE DATA -----------------------"); 
+         console.log("==================================");
+         
+        groupByStateYear.forEach(function(d)  {
+            //console.log("-----------------------------");
+            //console.log("d data", d);
+            var lineData = d.values;
+           
+           /* console.log("---");
+            console.log("lineData = ", lineData);
+            console.log("--year " + lineData.key);
+            console.log("--state " + lineData.values[0].state);
+            console.log("--totalprod " + lineData.values[0].totalprod); */
+            //console.log("!!!!!!!!!!!!!!!!!!!!!!!! lineData length ", lineData.length);
+            var graphData = [];
+            for(var c=0; c<lineData.length; c++) {
+                var tp = lineData[c].values[0].totalprod;
+                if(parseFloat(tp) == NaN) {
+                    tp = 0;
+                }
+                var yearData = {year: lineData[c].key, state: lineData[c].values[0].state, totalprod: tp};
+                
+                graphData.push(yearData);
+            }
+
+            // Sort by year
+            graphData.sort(function(x, y){
+                return d3.ascending(x.year, y.year);
+             });
+
+            stateLineData.push(graphData);
+           // console.log("++++++++++++++++++++++++++++++++++++++");
+           // console.log("--- " + d.key);
+            //console.log(lineData);
+            var valueLine = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { if(parseFloat(d.totalprod) == NaN) d.totalprod = 0;   return y(d.totalprod); });
+          //  console.log("---");
+           // console.log(valueLine);
+            valueLineData.push(valueLine);
+        });
+
+        //console.log("stateLineData " , stateLineData);
+         
+        /*
+        var lineData = groupByYear;
+
+        lineData.forEach(function(d) {
+            d.year = parseInt(d.key);
+            d.displayYear = parseTime(d.key); 
+        });
+
+        lineData.sort(function(x, y){
+            return d3.ascending(x.year, y.year);
+         })
+        console.log("lineData", lineData);
+
+        
+        
+        lineData.forEach(function(d) {
+            console.log("d=", d.values); 
+        });
+        */
+        
+
+      
+
+        // append the svg obgect to the body of the page
+        // appends a 'group' element to 'svg'
+        // moves the 'group' element to the top left margin
+        var svg4 = stateContainer.append("svg")
+        .attr("width", width + marginBar.left + marginBar.right)
+        .attr("height", height + marginBar.top + marginBar.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + marginBar.left + "," + marginBar.top + ")");
+
+        var prodDomain = [
+            d3.min(stateLineData, function(c) { return d3.min(c, function(v) { return v.totalprod; }); }),
+            d3.max(stateLineData, function(c) { return d3.max(c, function(v) { return v.totalprod; }); })
+            ];
+        console.log("MAX OF ALL STATE TOTALPROD = ", prodDomain);
+        
+        // Scale the range of the data
+        x.domain(d3.extent(stateLineData[0], function(d) { return d.year; }));
+        y.domain(prodDomain);
+      
+        // Add the valueline path.
+        
+        svg4.append("path")
+        .data([stateLineData[0]])
+        .attr("class", "line")
+        .attr('stroke', "#bc8600") 
+        .attr("fill", "none")
+        .attr("d", valueLineData[0]);  
+
+        //console.log("=========================================== STATE LINE CHART");
+        //console.log("Graphing 'stateLineData[0]' ", stateLineData[0]);
+       // console.log("LINE valueline = " , valueLineData[0]);
+
+       var colorScale = d3.scaleSequential(d3["interpolateRainbow"])
+        .domain([0, width]);
+        
+        stateLineData.forEach(function(d, i)  {
+            var lineData = d;
+            svg4.append("path")
+            .data([lineData])
+            .attr("class", "line")
+            .attr('stroke', "#bc8600") 
+            .attr("fill", "none")
+            .attr("d", valueLineData[i]); 
+        });
+        
+        console.log("add X axis");
+        // Add the X Axis
+        svg4.append("g")
+        .attr("transform", "translate(0," + height + ")") 
+        .call(d3.axisBottom(x)
+          //  .tickFormat(d3.format(".0s"))
+            ) ;
+
+        console.log("add Y axis");
+        // Add the Y Axis
+        svg4.append("g")
+        .call(d3.axisLeft(y));
+    }
+
+    fnCreateState = createStateChart; // store this function in a global var for calling via settimeout
+
+
+
+    // END OF STATE CHART CODE
 
 });
