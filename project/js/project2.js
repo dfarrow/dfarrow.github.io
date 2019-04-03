@@ -268,7 +268,7 @@ d3.queue()
                 myPath.attr("title", infoString);
                 
                 myPath.text(function(d, infoString) { return infoString; })
-                .on("mouseenter", function(d, infoString){
+                .on("mouseenter", function(d){
                     
                     var area = d.id; 
                                                 
@@ -285,11 +285,11 @@ d3.queue()
 
                     // CHANGE BASED ON PROPERTY
                     if(currentMapProp == "varHoneyProd") {
-                        var infoString = area + "<br>Total Honey Production: " + d3.format(".2s")(myVal); 
+                        var infoString = area + "<br>Total Honey Production: " + ctFormat(myVal); 
                     }
 
                     if(currentMapProp == "varNeonic") {
-                        var infoString = area + "<br>Total Neonicotinoid Use: " + d3.format(".2s")(myVal); 
+                        var infoString = area + "<br>Total Neonicotinoid Use: " + ctFormat(myVal); 
                     }
 
                     tooltip.html(infoString); 
@@ -374,7 +374,7 @@ d3.queue()
             .scale(y)
             .ticks(5)
             .tickFormat(function(d) {
-                return d3.format(".2s")(d)
+                return ctFormat(d)
             });
 
           var keyLabel = "Honey Production (lbs)";
@@ -441,7 +441,7 @@ d3.queue()
 
 
         // set the dimensions and margins of the graph
-        var marginBar = {top: 20, right: 20, bottom: 60, left: 80},
+        var marginBar = {top: 20, right: 20, bottom: 60, left: 45},
         width = wLine - marginBar.left - marginBar.right,
         height = hLine - marginBar.top - marginBar.bottom;
 
@@ -504,13 +504,15 @@ d3.queue()
         svg2.append("g")
         .attr("transform", "translate(0," + height + ")") 
         .call(d3.axisBottom(x)
-          //  .tickFormat(d3.format(".0s"))
+            .tickFormat(d3.format("d"))
             ) ;
 
         console.log("add Y axis");
         // Add the Y Axis
         svg2.append("g")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y)
+            .tickFormat(ctFormat)
+        );
     }
     
     
@@ -537,7 +539,7 @@ d3.queue()
         var width = barContainer.node().getClientRects()[0].width;
         var height = barContainer.node().getClientRects()[0].height;
         // set the dimensions and margins of the graph
-        var margin = {top: 20, right: 20, bottom: 60, left: 80},
+        var margin = {top: 20, right: 20, bottom: 60, left: 45},
         width = width - margin.left - margin.right,
         height = height - margin.top - margin.bottom;
 
@@ -591,11 +593,16 @@ d3.queue()
         // add the x Axis
         svg3.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x)
+        
+            .tickFormat(d3.format("d"))
+            );
 
         // add the y Axis
         svg3.append("g")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y)
+            .tickFormat(ctFormat)
+        );
  
 
     }
@@ -631,7 +638,7 @@ d3.queue()
 
 
         // set the dimensions and margins of the graph
-        var marginBar = {top: 20, right: 20, bottom: 60, left: 80},
+        var marginBar = {top: 20, right: 20, bottom: 60, left: 45},
         width = wLine - marginBar.left - marginBar.right,
         height = hLine - marginBar.top - marginBar.bottom;
 
@@ -669,7 +676,7 @@ d3.queue()
                 if(parseFloat(tp) == NaN) {
                     tp = 0;
                 }
-                var yearData = {year: lineData[c].key, state: lineData[c].values[0].state, totalprod: tp};
+                var yearData = {year: parseInt(lineData[c].key), state: lineData[c].values[0].state, totalprod: tp};
                 
                 graphData.push(yearData);
             }
@@ -749,16 +756,44 @@ d3.queue()
         //console.log("Graphing 'stateLineData[0]' ", stateLineData[0]);
        // console.log("LINE valueline = " , valueLineData[0]);
 
-       var colorScale = d3.scaleSequential(d3["interpolateRainbow"])
-        .domain([0, width]);
-        
+        var colorScale = d3.scaleSequential(d3["interpolateRainbow"])
+            .domain([0, width]);
+
+        var stateColors1 = d3.schemeCategory20;
+        var stateColors2 = d3.schemeCategory20b;
+        var stateColors3 = d3.schemeCategory20c;
+        stateColors1=  stateColors1.concat(stateColors2, stateColors3)
+        console.log("stateColors length " + stateColors1.length);
+
+        var stateColors = d3.scaleOrdinal(stateColors1);
+
         stateLineData.forEach(function(d, i)  {
             var lineData = d;
+           // console.log(lineData);
+            var infoString = "State: " + d[0].state;
             svg4.append("path")
             .data([lineData])
             .attr("class", "line")
-            .attr('stroke', "#bc8600") 
+            .style("stroke", function(d) { // Add dynamically
+               // console.log("d", d);
+                return d.color = stateColors(d[0].state); })
             .attr("fill", "none")
+            .on("mouseenter", function(d){
+                var infoString = "State: " + d[0].state;; 
+                tooltip.html(infoString); 
+                return tooltip.style("display", "block");
+            })
+            .on("movemove", function(d){
+                var infoString = "State: " + d[0].state;; 
+                tooltip.html(infoString); 
+                return tooltip.style("display", "block");
+            })
+            .on("mousemove", function(){
+                return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX+30)+"px");
+            })
+            .on("mouseout", function(){ 
+                    return tooltip.style("display", "none");v
+            })
             .attr("d", valueLineData[i]); 
         });
         
@@ -767,13 +802,15 @@ d3.queue()
         svg4.append("g")
         .attr("transform", "translate(0," + height + ")") 
         .call(d3.axisBottom(x)
-          //  .tickFormat(d3.format(".0s"))
+             .tickFormat(d3.format("d"))
             ) ;
 
         console.log("add Y axis");
         // Add the Y Axis
         svg4.append("g")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y)
+            .tickFormat(ctFormat)
+        );
     }
 
     fnCreateState = createStateChart; // store this function in a global var for calling via settimeout
