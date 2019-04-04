@@ -10,6 +10,8 @@ var tooltip = d3.select("body")
 .attr("class", " arrow_box shadow")
 .style("background", "#FFF")
 .text("a simple tooltip");
+
+var fnUpdateMapData;
  
 var ctFormat = d3.format(".2s"); 
 var mapContainerRect = d3.select("#my-map").node().parentNode.getBoundingClientRect();
@@ -121,9 +123,25 @@ d3.queue()
     ////////////////////////////////////////////////
     ///// updateMapData() - Updates map on year change
     ////////////////////////////////////////////////
-    function updateMapData(year, showProp) {
-        d3.select("#yearInfo").text(year); 
 
+    var mapTab = document.getElementById("map-tab");
+    mapTab.addEventListener("click", function() {
+        //if(!isLineCreated) {
+            //isLineCreated = true;
+            
+            setTimeout("fnUpdateMapData()", 300); // Call after slight delay to render before height/width
+        //}        
+    });
+
+    function updateMapData(year, showProp) {
+        console.log("Year is " , year);
+        if(year == undefined) {
+            year = currentYear;
+        }
+        if(showProp == undefined) {
+            showProp = currentMapProp;
+        }
+        d3.select("#yearInfo").text(year);  
         featureValues = []; // Reset array to hold current year data
 
         //console.log("updateMapData() " + year)
@@ -310,6 +328,8 @@ d3.queue()
     
     updateMapData(currentYear, currentMapProp);
 
+    fnUpdateMapData = updateMapData;
+
     // Set up Year Slider
     var rngYear = document.getElementById("rangeYear");
     rngYear.addEventListener("change", handleSlider, false);
@@ -324,7 +344,27 @@ d3.queue()
     var radioButtons = d3.selectAll("input[name='mapProp']").on("change", function(){
       
         currentMapProp = this.id;
-        updateMapData(currentYear, currentMapProp); 
+        
+        if(d3.select("#map").style("display") == "block") {
+            // bar chart shown
+            updateMapData(currentYear, currentMapProp); 
+        }
+
+        if(d3.select("#bar").style("display") == "block") {
+            // bar chart shown
+            createBarChart();
+        }
+
+        if(d3.select("#line").style("display") == "block") {
+            // bar chart shown
+            createLineChart();
+        }
+        /*
+        if(d3.select("#stateline").style("display") == "block") {
+            // bar chart shown
+            createStateLineChart();
+        }*/
+        
     });
 
     function createLegend(mySvg) {
@@ -424,14 +464,17 @@ d3.queue()
     var isLineCreated = false;
     var lineTab = document.getElementById("line-tab");
     lineTab.addEventListener("click", function() {
-        if(!isLineCreated) {
-            isLineCreated = true;
+        //if(!isLineCreated) {
+            //isLineCreated = true;
+            d3.select("#bar").style("visibility","hidden");
             setTimeout("fnCreateLine()", 300); // Call after slight delay to render before height/width
-        }        
+        //}        
     });
 
     function createLineChart() {
         
+        d3.select("#line-container").html("");
+        d3.select("#bar").style("visibility","visible");
         var lineContainer = d3.select("#line-container");
         var wLine = lineContainer.node().getClientRects()[0].width;
         var hLine = lineContainer.node().getClientRects()[0].height;
@@ -538,15 +581,17 @@ d3.queue()
     var isBarCreated = false;
     var barTab = document.getElementById("bar-tab");
     barTab.addEventListener("click", function() {
-        if(!isBarCreated) {
-            isBarCreated = true;
+        //if(!isBarCreated) {
+           // isBarCreated = true;
+           d3.select("#bar").style("visibility","hidden");
             setTimeout("fnCreateBar()", 300); // Call after slight delay to render before height/width
-        }        
+        //}        
     });
 
 
     function createBarChart() {
-
+        d3.select("#bar").style("visibility", "visible");
+        d3.select("#bar-container").html("");
         var barContainer = d3.select("#bar-container");
         var width = barContainer.node().getClientRects()[0].width;
         var height = barContainer.node().getClientRects()[0].height;
