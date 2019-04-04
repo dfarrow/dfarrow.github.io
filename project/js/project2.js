@@ -104,7 +104,6 @@ d3.queue()
         d.totalYearNumCol = d3.sum(d.values, function(d7) {
             return d7.numcol;
         });
- 
 
     }); 
   
@@ -484,7 +483,7 @@ d3.queue()
 
 
         // set the dimensions and margins of the graph
-        var marginBar = {top: 20, right: 20, bottom: 60, left: 45},
+        var marginBar = {top: 20, right: 20, bottom: 60, left: 65},
         width = wLine - marginBar.left - marginBar.right,
         height = hLine - marginBar.top - marginBar.bottom;
 
@@ -568,6 +567,18 @@ d3.queue()
         .call(d3.axisLeft(y)
             .tickFormat(ctFormat)
         );
+
+
+        // now add titles to the axes
+        svg2.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate(-45,"+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+            .text("Honey (lbs)");
+
+        svg2.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width/2) +","+(height+(45))+")")  // centre below axis
+            .text("Year");
     }
     
     
@@ -596,7 +607,7 @@ d3.queue()
         var width = barContainer.node().getClientRects()[0].width;
         var height = barContainer.node().getClientRects()[0].height;
         // set the dimensions and margins of the graph
-        var margin = {top: 20, right: 20, bottom: 60, left: 45},
+        var margin = {top: 20, right: 20, bottom: 60, left: 65},
         width = width - margin.left - margin.right,
         height = height - margin.top - margin.bottom;
 
@@ -700,7 +711,16 @@ d3.queue()
             .tickFormat(ctFormat)
         );
  
+        // now add titles to the axes
+        svg3.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate(-45,"+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+            .text("Honey (lbs)");
 
+        svg3.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width/2) +","+(height+(45))+")")  // centre below axis
+            .text("Year");
     }
 
     fnCreateBar = createBarChart; // store this function in a global var for calling via settimeout
@@ -730,11 +750,10 @@ d3.queue()
 
         console.log("wLine = " + wLine);
         //var wLine = 920;
-        //var hLine = 500; 
-
+        //var hLine = 500;  
 
         // set the dimensions and margins of the graph
-        var marginBar = {top: 20, right: 20, bottom: 60, left: 45},
+        var marginBar = {top: 20, right: 20, bottom: 60, left: 65},
         width = wLine - marginBar.left - marginBar.right,
         height = hLine - marginBar.top - marginBar.bottom;
 
@@ -907,6 +926,18 @@ d3.queue()
         .call(d3.axisLeft(y)
             .tickFormat(ctFormat)
         );
+
+
+         // now add titles to the axes
+         svg4.append("text")
+         .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+         .attr("transform", "translate(-45,"+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+         .text("Honey (lbs)");
+
+         svg4.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width/2) +","+(height+(45))+")")  // centre below axis
+            .text("Year");
     }
 
     fnCreateState = createStateChart; // store this function in a global var for calling via settimeout
