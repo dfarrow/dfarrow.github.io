@@ -106,9 +106,7 @@ d3.queue()
         });
 
     }); 
-  
-  
-
+   
     var groupByStateYear = d3.nest()
         .key(function(d) {
             return d.state;
@@ -118,7 +116,23 @@ d3.queue()
         })
         .entries(data); 
  
+    var groupByState = d3.nest()
+        .key(function(d) {
+            return d.state;
+        }) 
+        .entries(data); 
+    
+    groupByState.forEach(function(d) {
+        d.totalStateProd = d3.sum(d.values, function(d2) {
+            return d2.totalprod;
+        });
 
+        d.totalStateNeonic = d3.sum(d.values, function(d4) {
+            return d4.nAllNeonic;
+        });
+    });  
+    
+    console.log("groupByState", groupByState);
     ////////////////////////////////////////////////
     ///// updateMapData() - Updates map on year change
     ////////////////////////////////////////////////
@@ -752,6 +766,9 @@ d3.queue()
         //var wLine = 920;
         //var hLine = 500;  
 
+        //////////////////////////////////////
+        //////////////////////////////////////
+
         // set the dimensions and margins of the graph
         var marginBar = {top: 20, right: 20, bottom: 60, left: 65},
         width = wLine - marginBar.left - marginBar.right,
@@ -778,13 +795,7 @@ d3.queue()
             //console.log("-----------------------------");
             //console.log("d data", d);
             var lineData = d.values;
-           
-           /* console.log("---");
-            console.log("lineData = ", lineData);
-            console.log("--year " + lineData.key);
-            console.log("--state " + lineData.values[0].state);
-            console.log("--totalprod " + lineData.values[0].totalprod); */
-            //console.log("!!!!!!!!!!!!!!!!!!!!!!!! lineData length ", lineData.length);
+            
             var graphData = [];
             for(var c=0; c<lineData.length; c++) {
                 var tp = lineData[c].values[0].totalprod;
