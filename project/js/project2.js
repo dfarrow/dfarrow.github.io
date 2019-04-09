@@ -131,8 +131,14 @@ d3.queue()
             return d4.nAllNeonic;
         });
     });  
-    
-    console.log("groupByState", groupByState);
+ 
+    groupByState.sort(function(x, y){
+        return d3.descending(x.totalStateProd, y.totalStateProd);
+     })
+
+        
+    console.log("!!!!!!!!!!!!! groupByState", groupByState);
+
     ////////////////////////////////////////////////
     ///// updateMapData() - Updates map on year change
     ////////////////////////////////////////////////
@@ -790,12 +796,28 @@ d3.queue()
          console.log("==================================");
          console.log("STATE DATA -----------------------"); 
          console.log("==================================");
-         
-        groupByStateYear.forEach(function(d)  {
+         var topTenStateObjs = groupByState.slice(0, 9); 
+
+         var topTenStates = [];
+         for(var s=0; s<topTenStateObjs.length; s++) {
+             topTenStates.push(topTenStateObjs[s].key);
+         }
+            console.log("!! topTenStates ", topTenStates);
+
+            console.log("!! groupByStateYear ", groupByStateYear);
+
+        var topTen = groupByStateYear.filter(function(v) { 
+            console.log("v ", v);
+            return topTenStates.includes( v.key); 
+            
+        });
+
+        topTen.forEach(function(d)  {
             //console.log("-----------------------------");
             //console.log("d data", d);
+ 
             var lineData = d.values;
-            
+            //console.log("lineData ", lineData);
             var graphData = [];
             for(var c=0; c<lineData.length; c++) {
                 var tp = lineData[c].values[0].totalprod;
@@ -804,7 +826,10 @@ d3.queue()
                 }
                 var yearData = {year: parseInt(lineData[c].key), state: lineData[c].values[0].state, totalprod: tp};
                 
-                graphData.push(yearData);
+                //if(topTenStates.includes( lineData[c].values[0].state )) {
+                    graphData.push(yearData);
+                //}
+ 
             }
 
             // Sort by year
@@ -894,6 +919,8 @@ d3.queue()
         var stateColors = d3.scaleOrdinal(stateColors1);
 
         stateLineData.forEach(function(d, i)  {
+
+            if(d.length == 0) return;
             var lineData = d;
            // console.log(lineData);
             var infoString = "State: " + d[0].state;
