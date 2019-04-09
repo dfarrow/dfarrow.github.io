@@ -796,7 +796,7 @@ d3.queue()
          console.log("==================================");
          console.log("STATE DATA -----------------------"); 
          console.log("==================================");
-         var topTenStateObjs = groupByState.slice(0, 9); 
+         var topTenStateObjs = groupByState.slice(0, 10); 
 
          var topTenStates = [];
          for(var s=0; s<topTenStateObjs.length; s++) {
@@ -806,25 +806,33 @@ d3.queue()
 
             console.log("!! groupByStateYear ", groupByStateYear);
 
-        var topTen = groupByStateYear.filter(function(v) { 
-            console.log("v ", v);
+        var topTen = groupByStateYear.filter(function(v) {  
             return topTenStates.includes( v.key); 
             
         });
 
+        var stateColors1 = d3.schemeCategory10;
+        //var stateColors2 = d3.schemeCategory20b;
+        //var stateColors3 = d3.schemeCategory20c;
+        //stateColors1=  stateColors1.concat(stateColors2, stateColors3)
+        
+        var stateColors = d3.scaleOrdinal(stateColors1);
+
         topTen.forEach(function(d)  {
             //console.log("-----------------------------");
-            //console.log("d data", d);
+            console.log("d data", d);
  
             var lineData = d.values;
-            //console.log("lineData ", lineData);
+ 
+            var myColor = stateColors(d.key);
+ 
             var graphData = [];
             for(var c=0; c<lineData.length; c++) {
                 var tp = lineData[c].values[0].totalprod;
                 if(parseFloat(tp) == NaN) {
                     tp = 0;
                 }
-                var yearData = {year: parseInt(lineData[c].key), state: lineData[c].values[0].state, totalprod: tp};
+                var yearData = {year: parseInt(lineData[c].key), state: lineData[c].values[0].state, totalprod: tp, color: myColor};
                 
                 //if(topTenStates.includes( lineData[c].values[0].state )) {
                     graphData.push(yearData);
@@ -896,57 +904,36 @@ d3.queue()
       
         // Add the valueline path.
         
+        /*
         svg4.append("path")
         .data([stateLineData[0]])
         .attr("class", "line")
         .attr('stroke', "#bc8600") 
         .attr("fill", "none")
-        .attr("d", valueLineData[0]);  
+        .attr("d", valueLineData[0]);   */
 
         //console.log("=========================================== STATE LINE CHART");
         //console.log("Graphing 'stateLineData[0]' ", stateLineData[0]);
        // console.log("LINE valueline = " , valueLineData[0]);
-
+/*
         var colorScale = d3.scaleSequential(d3["interpolateRainbow"])
             .domain([0, width]);
-
-        var stateColors1 = d3.schemeCategory20;
-        var stateColors2 = d3.schemeCategory20b;
-        var stateColors3 = d3.schemeCategory20c;
-        stateColors1=  stateColors1.concat(stateColors2, stateColors3)
-        console.log("stateColors length " + stateColors1.length);
-
-        var stateColors = d3.scaleOrdinal(stateColors1);
+*/
 
         stateLineData.forEach(function(d, i)  {
 
             if(d.length == 0) return;
-            var lineData = d;
-           // console.log(lineData);
+            var lineData = d;  
             var infoString = "State: " + d[0].state;
+          
             svg4.append("path")
             .data([lineData])
             .attr("class", "line")
             .style("stroke", function(d) { // Add dynamically
-               // console.log("d", d);
-                return d.color = stateColors(d[0].state); })
+                console.log("!!!!!!! d", d);
+                return d[0].color; })
             .attr("fill", "none")
-            .on("mouseenter", function(d){
-                var infoString = "State: " + d[0].state;; 
-                tooltip.html(infoString); 
-                return tooltip.style("display", "block");
-            })
-            .on("movemove", function(d){
-                var infoString = "State: " + d[0].state;; 
-                tooltip.html(infoString); 
-                return tooltip.style("display", "block");
-            })
-            .on("mousemove", function(){
-                return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX+30)+"px");
-            })
-            .on("mouseout", function(){ 
-                    return tooltip.style("display", "none");v
-            })
+             
             .attr("d", valueLineData[i]); 
         });
         
@@ -976,6 +963,137 @@ d3.queue()
             .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
             .attr("transform", "translate("+ (width/2) +","+(height+(45))+")")  // centre below axis
             .text("Year");
+
+        /////////////
+
+        var legend = svg4.append('g')
+            .data(stateLineData)
+            .enter()
+            .append('g')
+            .attr('class', 'legend');
+
+            legend.append('rect')
+            .attr('x', width - 20)
+            .attr('y', function(d, i) {
+                return i * 20;
+            })
+            .attr('width', 10)
+            .attr('height', 10)
+            .style('fill', function(d) {
+                return d.color;
+            });
+
+            legend.append('text')
+            .attr('x', width - 8)
+            .attr('y', function(d, i) {
+                return (i * 20) + 9;
+            })
+            .text(function(d) {
+                return d[0].state;
+            });
+
+        
+            console.log("LEGEND ", legend);
+            
+        /////////////
+
+        var mouseG = svg4.append("g")
+            .attr("class", "mouse-over-effects");
+      
+          mouseG.append("path") // this is the black vertical line to follow mouse
+            .attr("class", "mouse-line")
+            .style("stroke", "black")
+            .style("stroke-width", "1px")
+            .style("opacity", "0");
+            
+          var lines = document.getElementsByClassName('line');
+      
+          var mousePerLine = mouseG.selectAll('.mouse-per-line')
+            .data(stateLineData)
+            .enter()
+            .append("g")
+            .attr("class", "mouse-per-line");
+      
+          mousePerLine.append("circle")
+            .attr("r", 7)
+            .style("stroke", function(d) {
+                console.log("!!", d[0].state + " color " +  d[0].color);
+              return d[0].color;
+            })
+            .style("fill", "none")
+            .style("stroke-width", "1.5px")
+            .style("opacity", "0");
+      
+          mousePerLine.append("text")
+            .attr("transform", "translate(10,3)") 
+
+        //// 
+        mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+            .attr('width', width) // can't catch mouse events on a g element
+            .attr('height', height)
+            .attr('fill', 'none')
+            .attr('pointer-events', 'all')
+            .on('mouseout', function() { // on mouse out hide line, circles and text
+                d3.select(".mouse-line")
+                .style("opacity", "0");
+                d3.selectAll(".mouse-per-line circle")
+                .style("opacity", "0");
+                d3.selectAll(".mouse-per-line text")
+                .style("opacity", "0");
+            })
+            .on('mouseover', function() { // on mouse in show line, circles and text
+                d3.select(".mouse-line")
+                .style("opacity", "1");
+                d3.selectAll(".mouse-per-line circle")
+                .style("opacity", "1");
+                d3.selectAll(".mouse-per-line text")
+                .style("opacity", "1");
+            })
+            .on('mousemove', function() { // mouse moving over canvas
+                var mouse = d3.mouse(this);
+                d3.select(".mouse-line")
+                .attr("d", function() {
+                    var d = "M" + mouse[0] + "," + height;
+                    d += " " + mouse[0] + "," + 0;
+                    return d;
+                });
+
+                d3.selectAll(".mouse-per-line")
+                .attr("transform", function(d, i) { 
+                    var xDate = x.invert(mouse[0]),
+                        bisect = d3.bisector(function(d) { return d.date; }).right;
+                        idx = bisect(d.values, xDate);
+                    
+                    var beginning = 0,
+                        end = lines[i].getTotalLength(),
+                        target = null;
+
+                    while (true){
+                    target = Math.floor((beginning + end) / 2);
+                    pos = lines[i].getPointAtLength(target);
+                    if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+                        break;
+                    }
+                    if (pos.x > mouse[0])      end = target;
+                    else if (pos.x < mouse[0]) beginning = target;
+                    else break; //position found
+                    }
+                    
+                    // Contents of text label
+                    d3.select(this).select('text')
+                    .attr("fill", function(d) { 
+                            return d[0].color;
+                              }) 
+                    .text(function(d) {
+                        console.log("D", d);
+                        return  d[0].state + " " + ctFormat(y.invert(pos.y));
+                    });
+                    
+                    return "translate(" + mouse[0] + "," + pos.y +")";
+                });
+            });
+
+            
     }
 
     fnCreateState = createStateChart; // store this function in a global var for calling via settimeout

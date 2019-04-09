@@ -190,3 +190,9 @@ margin-top: -17px;
 -moz-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
 box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
 }
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
