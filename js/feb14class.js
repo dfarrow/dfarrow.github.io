@@ -15,11 +15,21 @@ var cScale = d3.scaleLinear()
 console.log("cScale ", cScale);
 
 var svg = d3.select("svg");
+var circles;
 
-var circles = svg.selectAll("circle")
-            .data(data);
+function updateData(myData, con) {
+    console.log("myData", myData[0])
+  circles = con.selectAll("circle")
+            .data(myData)
+            .attr("fill", function(d) {
+                return cScale(d);
+            })
+            .attr("cx", function(d) {
+                return xScale(d);
+            })
+            .attr("cy", 50);
 
-circles.enter().append("circle")
+    circles.enter().append("circle")
     .attr("r", 10)
     .attr("fill", function(d) {
         return cScale(d);
@@ -28,6 +38,12 @@ circles.enter().append("circle")
         return xScale(d);
     })
     .attr("cy", 50);
+
+
+    circles.exit().remove();
+}
+
+updateData(data, svg);
     
 d3.selectAll("circle")
     .on("click", function(d){
@@ -49,3 +65,13 @@ d3.selectAll("circle")
 
     var axis = d3.axisBottom(xScale);
     d3.select("#xAxis").call(axis);
+
+
+
+    
+d3.select("#button").on("click", function() {
+ 
+
+    var data3 = [0.9, 3.4, 1.7, 2.1];
+    updateData(data3, svg);
+})
