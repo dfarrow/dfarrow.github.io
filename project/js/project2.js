@@ -633,13 +633,19 @@ d3.queue()
                 .enter().append("circle")
                 .attr("class", "data-circle") 
                 .on("mouseover", function() {
-                    d3.select(this)
+                    var myEl = d3.select(this);
+                    myEl
                         .classed("barHover", true);
+                    myEl
+                        .attr("r", "10");
                 })
                 .on("mouseout", function(d){ 
                         barTooltip.style("display", "none");
-                        d3.select(this)
-                        .classed("barHover", false);
+                        var myEl = d3.select(this);
+                        myEl
+                            .classed("barHover", false);
+                        myEl
+                            .attr("r", "3");
                     });;
             
             var myDotUpdates = myDots.merge(myDotsEnter);
