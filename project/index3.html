@@ -47,22 +47,34 @@
                   <!-- Tab content - Visualizations goes here -->
                   <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="map" role="tabpanel" aria-labelledby="map-tab">
+                      <div class="row chart-data">
+                          <div class="col">
+                            <h2>Year: <span id="yearInfo" class="bigProp" ></span></h2>
+                          </div>
+                          <div class="col">
+                            <h2><span class="propLabel1">Prop one</span>: <span id="totalProdInfo" class="bigProp" >&nbsp;</span></h2> 
+                          </div>
+                          <div class="col">
+                            <h2><span class="propLabel2">Prop two</span>: <span id="avgProdInfo" class="bigProp" >&nbsp;</span></h2> 
+                          </div>
+                        </div> 
                       <!-- Choropleth MAP Visualization-->
-                      <div id="content" class="chart chart-border map" >
+                      <div id="content" class="chart-map chart-border map" >
                         <svg id="my-map"> 
                         </svg>
                       </div>
       
                       <div id="sliderColumn" class="col">
                   
-                          <div class="slidecontainer"> 
-                            <input type="range" min="0" max="0" value="0" class="slider" id="rangeYear" list="tickmarks">
+                          <div class="slidecontainer" title="Choose Year"> 
+                            <input type="range" min="0" max="0" value="0" class="slider" id="rangeYear" list="tickmarks" title="Year">
                            
                             <datalist id="tickmarks">
                                <!-- <option value="1991" label="1991> -->
                                 
                             </datalist>
-                            
+                            <span>1991</span>
+                            <span style="float: right;">2017</span>
                           </div>
                       </div> 
                     </div>
@@ -90,11 +102,7 @@ Neonicotinoid use has been linked in a range of studies to adverse ecological ef
                   </p>
       
                 </div> 
-                <div class="custom-well">
-                  <h2>Year: <span id="yearInfo" class="bigProp" ></span></h2>
-                  <h2><span class="propLabel1">Prop one</span>: <span id="totalProdInfo" class="bigProp" >&nbsp;</span></h2> 
-                  <h2><span class="propLabel2">Prop two</span>: <span id="avgProdInfo" class="bigProp" >&nbsp;</span></h2> 
-                </div> 
+                
                 <div class="custom-well">
                   <h2>Display Value:</h2>
                   <form>
@@ -120,7 +128,8 @@ Neonicotinoid use has been linked in a range of studies to adverse ecological ef
              <!-- Row 3 -->
              <div class="row">
                 <div class="col footer">
-                  Daniel Farrow - Visualization Technologies (ARTG-5330)
+                  <br/>
+                  Daniel Farrow - Visualization Technologies (ARTG-5330) - Spring 2019
                 </div>
               </div>
           </div>

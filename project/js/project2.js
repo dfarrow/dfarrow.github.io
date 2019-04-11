@@ -295,6 +295,7 @@ d3.queue()
                     var infoString = "";
                     var showVal = 0;
                     var myPath = d3.select(this);
+                    
                     //console.log(found);
                     if (showProp == "varHoneyProd") {
                         // Color the shape and store the value in an attribute

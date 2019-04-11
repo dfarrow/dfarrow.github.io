@@ -64,8 +64,24 @@ h2 {
 .chart {
   
   width: 100%;
-  height: 500px;
+  height: 538px;
   margin-top: 20px;
+  text-align: center;
+   
+}
+
+.chart-data {
+  margin-top: 20px;
+}
+
+.chart-data h2 {
+  font-size: 11px;
+}
+
+.chart-map {
+  
+  width: 100%;
+  height: 420px; 
   text-align: center;
    
 }
