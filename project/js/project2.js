@@ -155,7 +155,7 @@ d3.queue()
             return d3.descending(x.totalStateProd, y.totalStateProd);
         });
 
-        console.log("!!!!!!!!!!!!! groupByState", groupByState);
+    
 
         ////////////////////////////////////////////////
         ///// updateMapData() - Updates map on year change
@@ -943,8 +943,7 @@ d3.queue()
             var stateContainer = d3.select("#state-container");
             var wLine = stateContainer.node().getClientRects()[0].width;
             var hLine = stateContainer.node().getClientRects()[0].height;
-
-            console.log("wLine = " + wLine);
+ 
             //var wLine = 920;
             //var hLine = 500;  
 
@@ -959,10 +958,17 @@ d3.queue()
             var parseTime = d3.timeParse("%yyyy");
 
             // set the ranges
-            var x = d3.scaleLinear().range([0, width]);
-            var y = d3.scaleLinear().range([height, 0]);
+            var xState = d3.scaleLinear().range([0, width]);
+            var yState = d3.scaleLinear().range([height, 0]);
 
-            console.log("groupByStateYear = ", groupByStateYear);/*
+            groupByState.sort(function (x, y) {
+                    return d3.descending(x.totalStateProd, y.totalStateProd);
+                });
+
+            
+                console.log("groupByState = ", groupByState);
+            
+            /*
         groupByStateYear.values.sort(function(x, y){
             return d3.ascending(x.year, y.year);
          }) */
@@ -972,20 +978,19 @@ d3.queue()
             console.log("==================================");
             console.log("STATE DATA -----------------------");
             console.log("==================================");
-            var topTenStateObjs = groupByState.slice(0, 5);
+            var topStateObjs = groupByState.slice(0, 5);
 
-            var topTenStates = [];
-            for (var s = 0; s < topTenStateObjs.length; s++) {
-                topTenStates.push(topTenStateObjs[s].key);
-            }
-            console.log("!! topTenStates ", topTenStates);
+            var topStatesArray = [];
+            for (var s = 0; s < topStateObjs.length; s++) {
+                topStatesArray.push(topStateObjs[s].key);
+            } 
 
-            console.log("!! groupByStateYear ", groupByStateYear);
-
-            var topTen = groupByStateYear.filter(function (v) {
-                return topTenStates.includes(v.key);
+            var topStates = groupByStateYear.filter(function (v) {
+                return topStatesArray.includes(v.key);
 
             });
+
+            console.log("topStates ", topStates);
 
             var stateColors1 = d3.schemeCategory10;
             //var stateColors2 = d3.schemeCategory20b;
@@ -994,10 +999,9 @@ d3.queue()
 
             var stateColors = d3.scaleOrdinal(stateColors1);
 
-            topTen.forEach(function (d) {
+            topStates.forEach(function (d) {
                 //console.log("-----------------------------");
-                console.log("d data", d);
-
+             
                 var lineData = d.values;
 
                 var myColor = stateColors(d.key);
@@ -1026,15 +1030,15 @@ d3.queue()
                 // console.log("--- " + d.key);
                 //console.log(lineData);
                 var valueLine = d3.line()
-                    .x(function (d) { return x(d.year); })
-                    .y(function (d) { if (parseFloat(d.totalprod) == NaN) d.totalprod = 0; return y(d.totalprod); });
+                    .x(function (d) { return xState(d.year); })
+                    .y(function (d) { if (parseFloat(d.totalprod) == NaN) d.totalprod = 0; return yState(d.totalprod); });
                 //  console.log("---");
                 // console.log(valueLine);
                 valueLineData.push(valueLine);
             });
  
 
-
+            console.log("valueLineData", valueLineData);
 
             // append the svg obgect to the body of the page
             // appends a 'group' element to 'svg'
@@ -1053,8 +1057,8 @@ d3.queue()
             console.log("MAX OF ALL STATE TOTALPROD = ", prodDomain);
 
             // Scale the range of the data
-            x.domain(d3.extent(stateLineData[0], function (d) { return d.year; }));
-            y.domain(prodDomain);
+            xState.domain(d3.extent(stateLineData[0], function (d) { return d.year; }));
+            yState.domain(prodDomain);
 
             // Add the valueline path.
   
@@ -1066,9 +1070,9 @@ d3.queue()
 
                 svg4.append("path")
                     .data([lineData])
-                    .attr("class", "line")
+                    .attr("class", "lineState")
                     .style("stroke", function (d) { // Add dynamically
-                        console.log("!!!!!!! d", d);
+                   
                         return d[0].color;
                     })
                     .attr("fill", "none")
@@ -1081,14 +1085,14 @@ d3.queue()
             // Add the X Axis
             svg4.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x)
+                .call(d3.axisBottom(xState)
                     .tickFormat(d3.format("d"))
                 );
 
             console.log("add Y axis");
             // Add the Y Axis
             svg4.append("g")
-                .call(d3.axisLeft(y)
+                .call(d3.axisLeft(yState)
                     .tickFormat(ctFormat)
                 );
 
@@ -1145,7 +1149,7 @@ d3.queue()
                 .style("stroke-width", "1px")
                 .style("opacity", "0");
 
-            var lines = document.getElementsByClassName('line');
+            var lines = document.getElementsByClassName('lineState');
 
             var mousePerLine = mouseG.selectAll('.mouse-per-line')
                 .data(stateLineData)
@@ -1156,7 +1160,7 @@ d3.queue()
             mousePerLine.append("circle")
                 .attr("r", 7)
                 .style("stroke", function (d) {
-                    console.log("!!", d[0].state + " color " + d[0].color);
+                
                     return d[0].color;
                 })
                 .style("fill", "none")
@@ -1199,7 +1203,7 @@ d3.queue()
 
                     d3.selectAll(".mouse-per-line")
                         .attr("transform", function (d, i) {
-                            var xDate = x.invert(mouse[0]),
+                            var xDate = xState.invert(mouse[0]),
                                 bisect = d3.bisector(function (d) { return d.date; }).right;
                             idx = bisect(d.values, xDate);
 
@@ -1223,9 +1227,8 @@ d3.queue()
                                 .attr("fill", function (d) {
                                     return d[0].color;
                                 })
-                                .text(function (d) {
-                                    console.log("D", d);
-                                    return d[0].state + " " + ctFormat(y.invert(pos.y));
+                                .text(function (d) { 
+                                    return d[0].state + " " + ctFormat(yState.invert(pos.y));
                                 });
 
                             return "translate(" + mouse[0] + "," + pos.y + ")";
