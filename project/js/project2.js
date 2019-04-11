@@ -153,8 +153,7 @@ d3.queue()
 
         groupByState.sort(function (x, y) {
             return d3.descending(x.totalStateProd, y.totalStateProd);
-        })
-
+        });
 
         console.log("!!!!!!!!!!!!! groupByState", groupByState);
 
@@ -191,7 +190,6 @@ d3.queue()
             var yearData = groupByYear.filter(obj => {
                 return obj.key == year.toString();
             });
-
 
             // SET MAP PROPERTY DISPLAY  
             if (showProp == "varHoneyProd") {
@@ -559,8 +557,7 @@ d3.queue()
                     .attr("height", height + marginBar.top + marginBar.bottom)
                     .append("g")
                     .attr("transform",
-                        "translate(" + marginBar.left + "," + marginBar.top + ")");
-
+                        "translate(" + marginBar.left + "," + marginBar.top + ")"); 
 
             }
 
@@ -588,6 +585,7 @@ d3.queue()
             // Scale the range of the data
             x.domain(d3.extent(lineData, function (d) { return d.year; }));
  
+             /*
             // Create the chart!
             myLine = svg2.selectAll("path")
                 .data([lineData])
@@ -604,7 +602,23 @@ d3.queue()
                 .attr("d", valueline);
 
             myLine.exit().transition().remove();
-  
+            */
+
+            myLine = svg2.selectAll(".line")
+                .data([lineData]);
+            
+            var myLineEnter = myLine.enter().append("path")
+            .attr("fill", "none")
+            .attr("class", "line");
+            
+            var myLineUpdates = myLine.merge(myLineEnter);
+            
+            myLineUpdates.transition().duration(1500)
+            .attr("stroke", lineColor)
+            .attr("d", valueline);
+            
+            myLine.exit().remove();
+ 
             svg2.selectAll(".xAxis").remove();
             // Add the X Axis
             svg2.append("g")
@@ -613,9 +627,9 @@ d3.queue()
                 .call(d3.axisBottom(x)
                     .tickFormat(d3.format("d"))
                 );
- 
 
             if (svg2.select(".yAxis")._groups[0][0] != undefined) {
+                // Update Y Axis
                 svg2.selectAll(".yAxis").transition().duration(1500)
                     .call(d3.axisLeft(y)
                         .tickFormat(ctFormat)
@@ -758,6 +772,7 @@ d3.queue()
             
             
             // append the rectangles for the bar chart
+            /*
             myBar = svg3.selectAll(".bar")
                 .data(barData) 
                 .attr("class", "bar")
@@ -778,6 +793,25 @@ d3.queue()
                 .attr("height", heightFunc);    
 
             myBar.exit().transition().remove();
+            */
+
+            myBar = svg3.selectAll(".bar")
+            .data(barData);
+        
+            var myBarEnter = myBar.enter().append("rect")
+            .attr("fill", barColor)
+            .attr("class", "bar");
+            
+            var myBarUpdates = myBar.merge(myBarEnter);
+            
+            myBarUpdates.transition().duration(1500)
+            .attr("fill", barColor)
+            .attr("x", function (d) { return x(d.year); })
+            .attr("width", x.bandwidth())
+            .attr("y", yFunc)
+            .attr("height", heightFunc);
+            
+            myBar.exit().remove();
 
             svg3.selectAll(".xAxis").remove();
             // add the x Axis
@@ -787,7 +821,6 @@ d3.queue()
                 .call(d3.axisBottom(x) 
                     .tickFormat(d3.format("d"))
                 );
- 
 
             if (svg3.select(".yAxis")._groups[0][0] != undefined) {
                 svg3.selectAll(".yAxis").transition().duration(1500)
@@ -873,7 +906,7 @@ d3.queue()
             console.log("==================================");
             console.log("STATE DATA -----------------------");
             console.log("==================================");
-            var topTenStateObjs = groupByState.slice(0, 10);
+            var topTenStateObjs = groupByState.slice(0, 5);
 
             var topTenStates = [];
             for (var s = 0; s < topTenStateObjs.length; s++) {
@@ -974,7 +1007,8 @@ d3.queue()
                     })
                     .attr("fill", "none")
 
-                    .attr("d", valueLineData[i]);
+                    .attr("d", valueLineData[i]);     
+
             });
 
             console.log("add X axis");
@@ -992,7 +1026,6 @@ d3.queue()
                     .tickFormat(ctFormat)
                 );
 
-
             // now add titles to the axes
             svg4.append("text")
                 .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
@@ -1005,8 +1038,9 @@ d3.queue()
                 .text("Year");
 
             /////////////
-
-            var legend = svg4.append('g')
+            var newCont = svg4.append('g').attr('class', 'legendContainerState');
+ /*
+            var legend = newCont.append('g')
                 .data(stateLineData)
                 .enter()
                 .append('g')
@@ -1031,9 +1065,9 @@ d3.queue()
                 .text(function (d) {
                     return d[0].state;
                 });
-
-
-            console.log("LEGEND ", legend);
+               
+*/
+            //console.log("LEGEND ", legend);
 
             /////////////
 
@@ -1137,8 +1171,6 @@ d3.queue()
         }
 
         fnCreateState = createStateChart; // store this function in a global var for calling via settimeout
-
-
 
         // END OF STATE CHART CODE
 
