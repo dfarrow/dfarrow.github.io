@@ -636,14 +636,6 @@ d3.queue()
                     d3.select(this)
                         .classed("barHover", true);
                 })
-                .on("mousemove", function(d){
-                    barTooltip
-                    .style("left", d3.event.pageX - 40 + "px")
-                    .style("top", d3.event.pageY - 80 + "px")
-                    .style("display", "inline-block")
-                    .attr("r", "8")
-                    .html((d.year) + "<br>" + valueFunc(d));
-                })
                 .on("mouseout", function(d){ 
                         barTooltip.style("display", "none");
                         d3.select(this)
@@ -652,7 +644,16 @@ d3.queue()
             
             var myDotUpdates = myDots.merge(myDotsEnter);
 
-            myDotUpdates.transition().duration(1500) 
+            myDotUpdates            
+            .on("mousemove", function(d){
+                barTooltip
+                .style("left", d3.event.pageX - 40 + "px")
+                .style("top", d3.event.pageY - 80 + "px")
+                .style("display", "inline-block")
+                .attr("r", "8")
+                .html((d.year) + "<br>" + valueFunc(d));
+            })
+            .transition().duration(1500) 
                 .attr("fill",lineColor)
                 .attr("r", 3)
                 .attr("cx", function(d) { return x(d.year); })
@@ -853,13 +854,6 @@ d3.queue()
                 d3.select(this)
                     .classed("barHover", true);
             })
-            .on("mousemove", function(d){
-                barTooltip
-                  .style("left", d3.event.pageX - 40 + "px")
-                  .style("top", d3.event.pageY - 70 + "px")
-                  .style("display", "inline-block")
-                  .html((d.year) + "<br>" + valueFunc(d));
-            })
             .on("mouseout", function(d){ 
                     barTooltip.style("display", "none");
                     d3.select(this)
@@ -868,7 +862,15 @@ d3.queue()
             
             var myBarUpdates = myBar.merge(myBarEnter);
             
-            myBarUpdates.transition().duration(1500)
+            myBarUpdates
+            .on("mousemove", function(d){
+                barTooltip
+                  .style("left", d3.event.pageX - 40 + "px")
+                  .style("top", d3.event.pageY - 70 + "px")
+                  .style("display", "inline-block")
+                  .html((d.year) + "<br>" + valueFunc(d));
+            })
+            .transition().duration(1500)
             .attr("fill", barColor)
             .attr("x", function (d) { return x(d.year); })
             .attr("width", x.bandwidth())
