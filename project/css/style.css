@@ -212,6 +212,9 @@ box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
   }
 
   .barHover {
-    fill-opacity: .5;
-    r: 10;
+    fill-opacity: .5; 
+  }
+
+  .lineHover {
+    stroke-opacity: .3; 
   }
