@@ -203,8 +203,8 @@ d3.queue()
             }
 
             if (showProp == "varNeonic") {
-                d3.select(".propLabel1").text("Total Neonicotinoids (kg)");
-                d3.select(".propLabel2").text("Avg Neonicotinoids (kg)");
+                d3.select(".propLabel1").text("Total Neonicotinoids (lbs)");
+                d3.select(".propLabel2").text("Avg Neonicotinoids (lbs)");
                 d3.select("#totalProdInfo").text(ctFormat(yearData[0].totalAllNeonic));
                 d3.select("#avgProdInfo").text(ctFormat(yearData[0].averageAllNeonic));
                 mapExtent = totalNeoExtent;
@@ -455,7 +455,7 @@ d3.queue()
 
             var keyLabel = "Honey Production (lbs)";
             if (currentMapProp == "varNeonic") {
-                keyLabel = "Neonicotinoid Use (kg)";
+                keyLabel = "Neonicotinoid Use (lbs)";
             }
 
             myKey.append("g")
