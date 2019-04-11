@@ -979,7 +979,7 @@ d3.queue()
             console.log("STATE DATA -----------------------");
             console.log("==================================");
             var topStateObjs = groupByState.slice(0, 5);
-
+ 
             var topStatesArray = [];
             for (var s = 0; s < topStateObjs.length; s++) {
                 topStatesArray.push(topStateObjs[s].key);
@@ -987,10 +987,26 @@ d3.queue()
 
             var topStates = groupByStateYear.filter(function (v) {
                 return topStatesArray.includes(v.key);
-
             });
+ 
+            var topStatesDesc = [];
+            
+            // Order the top states descending
+            for(var c=0; c<topStatesArray.length; c++){
+                console.log("topStatesArray[c] ", topStatesArray[c]);
+                for(var g=0; g<topStates.length; g++){
 
-            console.log("topStates ", topStates);
+                    console.log( g + " ",   topStates[g] );
+
+                    if(topStatesArray[c] == topStates[g].key) {
+                        console.log("FOUND " + topStatesArray[c]);
+                        topStatesDesc.push( topStates[g]);
+                        break;
+                    }
+                }
+            }
+             
+            topStates = topStatesDesc;
 
             var stateColors1 = d3.schemeCategory10;
             //var stateColors2 = d3.schemeCategory20b;
