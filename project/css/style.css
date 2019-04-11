@@ -199,3 +199,19 @@ box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
   .slidecontainer { 
     margin-top: 20px;
   }
+
+  .barToolTip {
+    position: absolute;
+    display: none;
+    min-width: 80px;
+    height: auto;
+    background: none repeat scroll 0 0 #ffffff;
+    border: 1px solid #6F257F;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .barHover {
+    fill-opacity: .5;
+    r: 10;
+  }

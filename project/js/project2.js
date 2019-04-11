@@ -510,8 +510,8 @@ d3.queue()
         function createLineChart() {
 
 
-            var valueline;
-            var lineColor, yLabel;
+            var valueline, valueFunc;
+            var lineColor, yLabel, dotFuncX, dotFuncY;
 
             var lineContainer = d3.select("#line-container");
             var wLine = lineContainer.node().getClientRects()[0].width;
@@ -570,6 +570,9 @@ d3.queue()
                 y.domain([0, d3.max(lineData, function (d) { return d.totalYearProd; })]);
                 lineColor = "#bc8600";
                 yLabel = "Total Honey Production (lbs)";
+                dotFuncY = function(d) { return y(d.totalYearProd); }
+
+                valueFunc = function(d) { return ctFormat(d.totalYearProd); }
             }
 
             if (currentMapProp == "varNeonic") {
@@ -580,6 +583,9 @@ d3.queue()
                 y.domain([0, d3.max(lineData, function (d) { return d.totalAllNeonic; })]);
                 lineColor = "#00FF00";
                 yLabel = "Total Neonic Use (lbs)";
+                dotFuncY = function(d) { return y(d.totalAllNeonic); }
+
+                valueFunc = function(d) { return ctFormat(d.totalAllNeonic); }
             }
 
             // Scale the range of the data
@@ -619,6 +625,42 @@ d3.queue()
             
             myLine.exit().remove();
  
+            // Add dots on line
+            var myDots = svg2.selectAll(".data-circle")
+                .data(lineData);
+
+            var myDotsEnter = myDots
+                .enter().append("circle")
+                .attr("class", "data-circle") 
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .classed("barHover", true);
+                })
+                .on("mousemove", function(d){
+                    barTooltip
+                    .style("left", d3.event.pageX - 40 + "px")
+                    .style("top", d3.event.pageY - 80 + "px")
+                    .style("display", "inline-block")
+                    .attr("r", "8")
+                    .html((d.year) + "<br>" + valueFunc(d));
+                })
+                .on("mouseout", function(d){ 
+                        barTooltip.style("display", "none");
+                        d3.select(this)
+                        .classed("barHover", false);
+                    });;
+            
+            var myDotUpdates = myDots.merge(myDotsEnter);
+
+            myDotUpdates.transition().duration(1500) 
+                .attr("fill",lineColor)
+                .attr("r", 3)
+                .attr("cx", function(d) { return x(d.year); })
+                .attr("cy", dotFuncY);
+                
+            myDots.exit().remove();
+                
+            // X Axis
             svg2.selectAll(".xAxis").remove();
             // Add the X Axis
             svg2.append("g")
@@ -628,6 +670,7 @@ d3.queue()
                     .tickFormat(d3.format("d"))
                 );
 
+            // Y Axis 
             if (svg2.select(".yAxis")._groups[0][0] != undefined) {
                 // Update Y Axis
                 svg2.selectAll(".yAxis").transition().duration(1500)
@@ -677,6 +720,7 @@ d3.queue()
             //}        
         });
 
+        var barTooltip = d3.select("body").append("div").attr("class", "barToolTip");
 
         function createBarChart() {
            // d3.select("#bar").style("visibility", "visible");
@@ -727,7 +771,7 @@ d3.queue()
 
             var valueBar;
             var barColor;
-            var yVal, yFunc, heightFunc;
+            var yVal, yFunc, heightFunc, valueFunc;
             if (currentMapProp == "varHoneyProd") {
                 // define the line
                 valueBar = d3.line()
@@ -744,6 +788,8 @@ d3.queue()
                 heightFunc = function(d) {
                     return height - y(d.totalYearProd);
                 }
+
+                valueFunc = function(d) { return ctFormat(d.totalYearProd); }
 
                 yLabel = "Total Honey Production (lbs)";
             }
@@ -763,6 +809,8 @@ d3.queue()
                 heightFunc = function(d) {
                     return height - y(d.totalAllNeonic);
                 }
+
+                valueFunc = function(d) { return ctFormat(d.totalAllNeonic); }
 
                 yLabel = "Total Neonic Use (lbs)";
             }
@@ -800,7 +848,23 @@ d3.queue()
         
             var myBarEnter = myBar.enter().append("rect")
             .attr("fill", barColor)
-            .attr("class", "bar");
+            .attr("class", "bar")
+            .on("mouseover", function() {
+                d3.select(this)
+                    .classed("barHover", true);
+            })
+            .on("mousemove", function(d){
+                barTooltip
+                  .style("left", d3.event.pageX - 40 + "px")
+                  .style("top", d3.event.pageY - 70 + "px")
+                  .style("display", "inline-block")
+                  .html((d.year) + "<br>" + valueFunc(d));
+            })
+            .on("mouseout", function(d){ 
+                    barTooltip.style("display", "none");
+                    d3.select(this)
+                     .classed("barHover", false);
+                });
             
             var myBarUpdates = myBar.merge(myBarEnter);
             
@@ -1038,38 +1102,37 @@ d3.queue()
                 .text("Year");
 
             /////////////
-            var newCont = svg4.append('g').attr('class', 'legendContainerState');
- /*
-            var legend = newCont.append('g')
-                .data(stateLineData)
-                .enter()
-                .append('g')
-                .attr('class', 'legend');
+            var newCont = svg4.append('g').attr('class', 'legendContainerState')
+                .attr("transform", "translate(" + (width -40) + "," + (0) + ")")  // centre below axis;
+ 
 
-            legend.append('rect')
-                .attr('x', width - 20)
-                .attr('y', function (d, i) {
-                    return i * 20;
-                })
-                .attr('width', 10)
-                .attr('height', 10)
-                .style('fill', function (d) {
-                    return d.color;
-                });
+            // Add one dot in the legend for each name.
+            var size = 10;
+            newCont.selectAll("mydots")
+            .data(stateLineData)
+            .enter()
+            .append("rect")
+                .attr("x", 20)
+                .attr("y", function(d,i){ return 10 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+                .attr("width", size)
+                .attr("height", size)
+                .style("fill", function(d){ return  d[0].color})
 
-            legend.append('text')
-                .attr('x', width - 8)
-                .attr('y', function (d, i) {
-                    return (i * 20) + 9;
-                })
-                .text(function (d) {
-                    return d[0].state;
-                });
-               
-*/
-            //console.log("LEGEND ", legend);
+            // Add one dot in the legend for each name.
+            newCont.selectAll("mylabels")
+            .data(stateLineData)
+            .enter()
+            .append("text")
+                .attr("x", 20 + size*1.2)
+                .attr("y", function(d,i){ return 10 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+                .style("fill", function(d){ return  d[0].color})
+                .text(function(d){ return d[0].state})
+                .attr("text-anchor", "left")
+                .attr("font-size", "10px")
+                .style("alignment-baseline", "middle")
+           
 
-            /////////////
+            ////////
 
             var mouseG = svg4.append("g")
                 .attr("class", "mouse-over-effects");
