@@ -165,7 +165,7 @@ d3.queue()
         mapTab.addEventListener("click", function () {
             //if(!isLineCreated) {
             //isLineCreated = true;
-
+            $("#radioButtons").css("visibility", "visible");
             setTimeout("fnUpdateMapData()", 300); // Call after slight delay to render before height/width
             //}        
         });
@@ -575,6 +575,7 @@ d3.queue()
         lineTab.addEventListener("click", function () {
             //if(!isLineCreated) {
             //isLineCreated = true;
+            $("#radioButtons").css("visibility", "hidden");
             //d3.select("#bar").style("visibility", "hidden");
             setTimeout("fnCreateLine()", 300); // Call after slight delay to render before height/width
             //}        
@@ -879,6 +880,7 @@ y2
         barTab.addEventListener("click", function () {
             //if(!isBarCreated) {
             // isBarCreated = true;
+            $("#radioButtons").css("visibility", "visible");
             //d3.select("#bar").style("visibility", "hidden");
             setTimeout("fnCreateBar()", 300); // Call after slight delay to render before height/width
             //}        
@@ -1097,6 +1099,7 @@ y2
         stateTab.addEventListener("click", function () {
             if (!isStateCreated) {
                 isStateCreated = true;
+                $("#radioButtons").css("visibility", "hidden");
                 setTimeout("fnCreateState()", 300); // Call after slight delay to render before height/width
             }
         });
