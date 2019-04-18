@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+ 
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <title>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+        <script src="https://d3js.org/topojson.v1.min.js" type="text/javascript"></script>
+       
+    </head>
+    <body> 
+
+        <div class="container">
+            <!-- Row 1 -->
+            <div class="row">
+              <div class="col">
+                <div class="header">
+                  <h1>Honey Production vs. Neonicotinoid Use in the United States (1991-2017)</h1>
+                </div>
+              </div> 
+            </div>
+            <!-- Row 2 -->
+            <div class="row">
+              <div class="col-8"> 
+                  <!-- Tabs here -->
+                  <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="map-tab" data-toggle="tab" href="#map" role="tab" aria-controls="map" aria-selected="true">Map</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="bar-tab" data-toggle="tab" href="#bar" role="tab" aria-controls="bar" aria-selected="false">Bar</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="line-tab" data-toggle="tab" href="#line" role="tab" aria-controls="line" aria-selected="false">Line</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="state-tab" data-toggle="tab" href="#state" role="tab" aria-controls="state" aria-selected="false">By State</a>
+                    </li>
+                  </ul>
+      
+                  <!-- Tab content - Visualizations goes here -->
+                  <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="map" role="tabpanel" aria-labelledby="map-tab">
+                      <div class="row chart-data">
+                          <div class="col">
+                            <h2>Year: <span id="yearInfo" class="bigProp" ></span></h2>
+                          </div>
+                          <div class="col">
+                            <h2><span class="propLabel1">Prop one</span>: <span id="totalProdInfo" class="bigProp" >&nbsp;</span>
+                              
+                              <span id="totalProdInfoDiff" class="bigPropDiff" ><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>&nbsp;</span>
+                            </h2> 
+                          </div>
+                          <div class="col">
+                            <h2><span class="propLabel2">Prop two</span>: <span id="avgProdInfo" class="bigProp" >&nbsp;</span>
+                             
+                              <span id="avgProdInfoDiff" class="bigPropDiff" >&nbsp;</span>
+                            </h2> 
+                          </div>
+                        </div> 
+                      <!-- Choropleth MAP Visualization-->
+                      <div id="content" class="chart-map chart-border map" >
+                        <svg id="my-map"> 
+                        </svg>
+                      </div>
+      
+                      <div id="sliderColumn" class="col">
+                  
+                          <div class="slidecontainer" title="Choose Year"> 
+                            <input type="range" min="0" max="0" value="0" class="slider" id="rangeYear" list="tickmarks" title="Year">
+                           
+                            <datalist id="tickmarks">
+                               <!-- <option value="1991" label="1991> -->
+                                
+                            </datalist>
+                            <span>1991</span>
+                            <span style="float: right;">2017</span>
+                          </div>
+                      </div> 
+                    </div>
+                    <div class="tab-pane fade" id="bar" role="tabpanel" aria-labelledby="bar-tab">
+                      <div id="bar-container" class="chart bar-container">US Total Bar Chart</div>
+                    </div>
+                    <div class="tab-pane fade" id="line" role="tabpanel" aria-labelledby="line-tab">
+                      <div id="line-container" class="chart line-container">US Total Line Chart</div>
+                    </div>
+                    <div class="tab-pane fade" id="state" role="tabpanel" aria-labelledby="state-tab">
+                      <div id="state-container" class="chart state-container">Top States Chart</div>
+                    </div>
+                  </div>
+                  
+                  
+                     
+              </div>
+              <div class="col-4">
+                <div class="custom-well description-well">
+                  <p>
+                    Neonicotinoids, a class of neuro-active insecticides chemically similar to nicotine, were developed in the 1980s and 90s. Compared to organophosphate and carbamate insecticides, neonicotinoids cause less toxicity in birds and mammals than insects.
+                  </p>
+                  <p>
+Neonicotinoid use has been linked in a range of studies to adverse ecological effects, including honey-bee colony collapse disorder (CCD) and loss of birds due to a reduction in insect populations; the findings used to be conflicting and thus controversial, but recent studies by the EFSA have confirmed the risk to bees. In 2013, the European Union and a few non EU countries restricted the use of certain neonicotinoids; Several states in the United States have also restricted usage of neonicotinoids.
+                  </p>
+      
+                </div> 
+                
+                <div class="custom-well">
+                  <h2>Display Value:</h2>
+                  <form>
+                      <div class="form-check">
+                          <input type="radio" class="form-check-input" name="mapProp" id="varHoneyProd" checked="checked">
+                          <label class="form-check-label" for="varHoneyProd">Honey Production</label>
+                      </div>
+                      <!--
+                      <div class="form-check">
+                          <input type="radio" class="form-check-input" name="mapProp"  id="varProdPerColony">
+                          <label class="form-check-label" for="varProdPerColony">Prod per Colony</label>
+                      </div>
+                      -->
+                      <div class="form-check">
+                          <input type="radio" class="form-check-input" name="mapProp"  id="varNeonic" >
+                          <label class="form-check-label" for="varNeonic">Total Neonic Use</label>
+                      </div> 
+                  </form>
+                </div>
+              </div>
+              
+            </div>
+             <!-- Row 3 -->
+             <div class="row">
+                <div class="col footer">
+                  <br/>
+                  Daniel Farrow - Visualization Technologies (ARTG-5330) - Spring 2019
+                </div>
+              </div>
+          </div>
+          
+          <div class="bg-image"></div>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+          <script type="text/javascript" src="js/project2.js"></script>
+          <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <div id="tooltip" style="position: absolute; border: solid 1px #CCCCCC; padding: 5px; display: none">
+            Tooltip content.
+        </div>
+     
+    </body>
+  
+</html>

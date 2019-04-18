@@ -1,0 +1,244 @@
+
+body {
+  background-color: #FFF;
+  margin: 20px 0; 
+  font-family: Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif; 
+}
+
+body p {
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0 0 20px 0;
+  color: #cea949;
+}
+
+h2 {
+  font-size: .8em;
+}
+
+.slider {
+  width: 100%;
+}
+
+/* Chorpleth main SVG container */
+.choro-container {
+    border: solid 1px #999;
+    overflow: hidden;
+    fill: #e6f2ff;
+    background-color: #e6f2ff;
+}
+
+.bg-image {
+
+  background-image: url(/project/images/bee.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  position: absolute;
+  right: 0%;
+  top: 0;
+  width: 16%;
+  height: 100%;
+  z-index: -100;
+}
+
+.footer {
+    color: #999999;
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px #EEEEEE solid;
+    margin-top: 40px;
+}
+
+.custom-well {
+  padding-top: 10px;
+  border-top: solid 1px #CCCCCC; 
+}
+
+.description-well {
+  margin-top: 42px;
+}
+
+.chart {
+  
+  width: 100%;
+  height: 538px;
+  margin-top: 20px;
+  text-align: center;
+   
+}
+
+.chart-data {
+  margin-top: 20px;
+}
+
+.chart-data h2 {
+  font-size: 11px;
+}
+
+.chart-map {
+  
+  width: 100%;
+  height: 420px; 
+  text-align: center;
+   
+}
+
+.chart-border {
+  border: solid 1px #CCC;
+}
+
+.chart.map { 
+  background-color: #e6f2ff;
+}
+
+.bigProp {
+  font-size: 2em;
+  display: block;
+}
+
+.value-up {
+  color: green;
+}
+
+.value-down {
+  color: red;
+}
+
+/* Shape class */
+.feature {
+  stroke: #AAAAAA;
+  stroke-width: .5;
+  fill: #777; 
+  xxshape-rendering: crispEdges;
+  xxvector-effect: non-scaling-stroke;
+}
+
+/* Highlight the shape on mouseover */
+.highLight {
+  stroke: #0056b3 ;
+  stroke-width: 3;
+  opacity: .3;
+  z-index: 1000;
+}
+
+/* Pointy box for hover */
+.arrow_box {
+        position: relative;
+        background: #ffffff;
+        border: 2px solid #2acafd;
+        min-width: 80px;
+        min-height: 70px;
+        padding: 10px;
+        font-family: arial, sans;
+        font-size: 1em;
+}
+
+.arrow_box:after, .arrow_box:before {
+        right: 100%;
+        top: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+}
+
+.arrow_box:after {
+        border-color: rgba(255, 255, 255, 0);
+        border-right-color: #ffffff;
+        border-width: 14px;
+        margin-top: -14px;
+}
+
+.arrow_box:before {
+      border-color: rgba(44, 191, 245, 0);
+      border-right-color: #2cbff5;
+      border-width: 17px;
+      margin-top: -17px;
+}
+
+.shadow {
+      -webkit-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+      -moz-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+      box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+}
+
+.mouseMove {
+  cursor: move;
+}
+
+
+/* Pointy box for hover */
+.arrow_box {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #2acafd;
+  min-width: 80px;
+  min-height: 70px;
+  padding: 10px;
+  font-family: arial, sans;
+  font-size: 1em;
+}
+
+.arrow_box:after, .arrow_box:before {
+  right: 100%;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.arrow_box:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-right-color: #ffffff;
+  border-width: 14px;
+  margin-top: -14px;
+}
+
+.arrow_box:before {
+border-color: rgba(44, 191, 245, 0);
+border-right-color: #2cbff5;
+border-width: 17px;
+margin-top: -17px;
+}
+
+.shadow {
+-webkit-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+-moz-box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+box-shadow: 3px 3px 6px 0px rgba(0,0,0,0.2);
+}
+
+.line, .lineState {
+    fill: none; 
+    stroke-width: 1.5px;
+  }
+
+  .slidecontainer { 
+    margin-top: 20px;
+  }
+
+  .barToolTip {
+    position: absolute;
+    display: none;
+    min-width: 80px;
+    height: auto;
+    background: none repeat scroll 0 0 #ffffff;
+    border: 1px solid #6F257F;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .barHover {
+    fill-opacity: .5; 
+  }
+
+  .lineHover {
+    stroke-opacity: .3; 
+  }
