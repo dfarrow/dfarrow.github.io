@@ -575,6 +575,7 @@ d3.queue()
         lineTab.addEventListener("click", function () {
             //if(!isLineCreated) {
             //isLineCreated = true;
+            showProp = "varHoneyProd";
             $("#radioButtons").css("visibility", "hidden");
             //d3.select("#bar").style("visibility", "hidden");
             setTimeout("fnCreateLine()", 300); // Call after slight delay to render before height/width
@@ -1431,4 +1432,37 @@ y2
 
         // END OF STATE CHART CODE
 
+    });
+
+    //// Show 1
+    $("#infoShow1").mouseover(function(event) {
+        tooltip.style("top", (event.pageY - 45) + "px").style("left", (event.pageX + 30) + "px");
+        tooltip.html("1991: Neonicotinoid use starts becoming widespread in the US");
+         tooltip.style("display", "block"); 
+                        
+    })
+    .mouseout( function () {     
+        return tooltip.style("display", "none"); v
+    });
+
+    // Show 2
+    $("#infoShow2").mouseover(function(event) {
+        tooltip.style("top", (event.pageY - 45) + "px").style("left", (event.pageX + 30) + "px");
+        tooltip.html("2002: Colony Collapse Disorder identifited as a widespread global problem");
+         tooltip.style("display", "block"); 
+                        
+    })
+    .mouseout( function () {     
+        return tooltip.style("display", "none"); v
+    });
+
+    // Show 3
+    $("#infoShow4").mouseover(function(event) {
+        tooltip.style("top", (event.pageY - 45) + "px").style("left", (event.pageX + 30) + "px");
+        tooltip.html("2016: European countries severely restrict Neonicotinoid use");
+         tooltip.style("display", "block"); 
+                        
+    })
+    .mouseout( function () {     
+        return tooltip.style("display", "none"); v
     });
